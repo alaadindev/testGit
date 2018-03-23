@@ -7,7 +7,7 @@
 </head>
 <body>
   <h2>create user</h2>
-<form action= "./project/control/createuser.php" method="post">
+<form action= "./control/createuser.php" method="post">
   username: <input type="text" name="username"><br>
   password: <input type="password" name="password"><br>
   phone number: <input type="text" name="phone"><br>
