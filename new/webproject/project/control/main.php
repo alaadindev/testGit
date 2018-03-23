@@ -1,7 +1,7 @@
 <?php
-required './model/class.php)';
-required './connectDB.php';
-required './model/check';
+require './model/class.php)';
+require './project/connectDB.php';
+require './model/check.php';
 
 
 ?>

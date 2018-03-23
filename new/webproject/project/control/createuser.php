@@ -1,5 +1,5 @@
 <?php
-required 'main.php';
+require 'main.php';
 if ($_SERVER['REQUEST_METHOD']==='POST'){
   if(isset($_POST['username'])
     &&isset($_POST['password'])
