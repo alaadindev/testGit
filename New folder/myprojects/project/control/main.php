@@ -1,6 +1,8 @@
 <?php
-include './model/class.php)';
-include './view/display.php';
-include './connectDB.php';
+required './model/class.php)';
+required './view/display.php';
+required './connectDB.php';
+required './model/check';
+
 
 ?>
