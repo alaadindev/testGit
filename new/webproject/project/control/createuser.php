@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
         $stmt->bind_param('sss',$username, $password, $phone);
         $stmt->execute();
         $stmt->close();
-        $stmt->close();
+        $conn->close();
 
 
 

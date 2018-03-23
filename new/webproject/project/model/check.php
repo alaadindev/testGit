@@ -1,6 +1,6 @@
 <?php
 class check{
-  public static checkuser(username, password, phone){
+  static public function checkuser($username, $password, $phone){
     return true;
   }
 
