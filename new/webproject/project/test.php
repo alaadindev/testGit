@@ -11,8 +11,15 @@
   username: <input type="text" name="username"><br>
   password: <input type="password" name="password"><br>
   phone number: <input type="text" name="phone"><br>
-  <input type="submit" value="Submit">
+  <input type="submit" value="Submit"><br>
 </form>
+<form action= "./control/createnote.php" method="post">
+	title: <input type="test" name="title"><br>
+	content: <input type="test" name="content"><br>
+	location L: <input type="test" name="lat">
+	location A: <input type="test" name="at"><br>
+	<input type="submit" value="submit">
+<form>
 </body>
 
 </html>
