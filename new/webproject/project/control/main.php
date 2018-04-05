@@ -1,6 +1,6 @@
 <?php
 require '/../model/class.php';
-require 'C:/wamp64/www/connectDB.php';
+require '/../../../../connectDB.php';
 require '/../model/check.php';
 
 
