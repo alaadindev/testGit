@@ -9,14 +9,21 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
       $title = $_POST['title'];
       $content = $_POST['content'];
       $lat = $_POST['lat'];
-	$at = $_POST['lng'];
+	$lng = $_POST['lng'];
       if(check::checknote($title, $content, $lat, $lng)){
-        $stmt = $conn->prepare("INSERT INTO user (username, password, 
-phonenumber) value (?,?,?)");
-        $stmt->bind_param('sssdd',$title, $content, $lat, $lng);
+        if($stmt = $conn->prepare("INSERT INTO note (title, content,
+lat, lng) values (?,?,?,?)")){
+
+
+        $stmt->bind_param('sssss',$title, $content, $lat, $lng);
         $stmt->execute();
         $stmt->close();
         $conn->close();
+      }
+      else{
+        var_dump($this->$stmt->error);
+
+      }
 
 
 
@@ -32,6 +39,3 @@ phonenumber) value (?,?,?)");
 }
 
 ?>
-
-
-

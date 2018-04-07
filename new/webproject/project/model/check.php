@@ -5,7 +5,6 @@ class check{
   }
   static public function checknote($title, $content, $lat, $lng){
 	return true;
-
+  }
 }
-
 ?>
