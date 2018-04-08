@@ -14,10 +14,12 @@
   <input type="submit" value="Submit"><br>
 </form>
 <form action= "./control/createnote.php" method="post">
-	title: <input type="test" name="title"><br>
-	content: <input type="test" name="contents"><br>
-	location lat: <input type="test" name="lat">
-	location lng: <input type="test" name="lng"><br>
+  username: <input type= "text" name="username">
+  password: <input type="text" name="password"><br>
+	title: <input type="text" name="title"><br>
+	content: <input type="text" name="contents"><br>
+	location lat: <input type="text" name="lat">
+	location lng: <input type="text" name="lng"><br>
 	<input type="submit" value="submit">
 <form>
 </body>
