@@ -2,10 +2,12 @@
 <?php
 require 'main.php';
 if ($_SERVER['REQUEST_METHOD']==='POST'){
-  if(isset($_POST['username'])&&isset($_POST['password'])&&isset($_POST['title'])
-    &&isset($_POST['contents'])
-    &&isset($_POST['lat'])
-    &&isset($_POST['lng'])){
+  if(isset($_POST['username'])&&
+      isset($_POST['password'])&&
+      isset($_POST['title'])&&
+      isset($_POST['contents'])&&
+      isset($_POST['lat'])&&
+      isset($_POST['lng'])){
       $username = $_POST['username'];
       $password = $_POST['password'];
       $title = $_POST['title'];
