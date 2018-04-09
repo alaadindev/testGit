@@ -20,8 +20,15 @@
 	content: <input type="text" name="contents"><br>
 	location lat: <input type="text" name="lat">
 	location lng: <input type="text" name="lng"><br>
-	<input type="submit" value="submit">
-<form>
+	<input type="submit" value="submit"><br>
+</form>
+<form action="./control/getnotes.php" method="post">
+  username: <input type="text" name="username"><br>
+  password: <input type="password" name="password"><br>
+  lat: <input type="text" name="lat">
+  lng: <input type="text" name="lng"><br>
+  <input type="submit" name="submit">
+</form>
 </body>
 
 </html>
