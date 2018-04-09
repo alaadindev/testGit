@@ -13,13 +13,16 @@ if($_SERVER['REQUEST_METHOD']==="POST"){
               $sql = "SELECT * FROM user WHERE username ='".$username."' AND password='".$password."';";
               $result = $conn->query($sql);
               if($result->num_rows>0){
-                $sql="SELECT noteID, (6371 * acos (cos ( radians($lat) )".
+                $sql="SELECT *, (6371 * acos (cos ( radians($lat) )".
                 "* cos( radians( lat ) )* cos( radians( lng ) - radians($lng) )".
                 "+ sin ( radians($lat) )* sin( radians( lat ) ))) AS distance FROM notes HAVING distance > 0 ORDER BY distance LIMIT 0 , 20";
                 $result = $conn->query($sql);
-                var_dump($result);
-                $row=$result->fetch_assoc();
-                echo $row['noteID']." : ".$row['distance'];
+                header('content-type: application/json');
+                $data = array();
+                while($row=$result->fetch_assoc()){
+                  $data[] = $row;
+                }
+                echo json_encode($data);
               }else{
                 echo "wrong password or username";
               }
