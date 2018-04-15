@@ -10,8 +10,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        test();
+
+    }
+    public void test(){
         Intent intent=new Intent(this,Test.class);
         startActivity(intent);
-
     }
 }
