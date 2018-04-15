@@ -1,5 +1,5 @@
 <?php
- header('Location: new/webproject/project/test.php');
+ header('Location: php/webproject/project/test.php');
 ?>
 <html>
 <head>
