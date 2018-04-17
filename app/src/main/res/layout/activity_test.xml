@@ -12,12 +12,12 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/user"
-        android:hint="usename"/>
+        android:id="@+id/userlogin"
+        android:hint="username"/>
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/pass"
+        android:id="@+id/passlogin"
         android:hint="password"/>
 
 
@@ -33,17 +33,17 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/username"
-        android:hint="usename"/>
+        android:id="@+id/usersignup"
+        android:hint="username"/>
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/password"
+        android:id="@+id/passsignup"
         android:hint="password"/>
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/phone"
+        android:id="@+id/phonesignup"
         android:hint="phone number"/>
 
     </LinearLayout>
@@ -58,17 +58,17 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/newuser"
+        android:id="@+id/ownername"
         android:hint="username"/>
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/newpass"
+        android:id="@+id/ownerpass"
         android:hint="password"/>
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/title"
+        android:id="@+id/notetitle"
         android:hint="title"/>
 
     </LinearLayout>
@@ -78,17 +78,17 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/content"
+            android:id="@+id/notecontent"
             android:hint="note body"/>
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lat"
+            android:id="@+id/notelat"
             android:hint="lat"/>
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lng"
+            android:id="@+id/notelng"
             android:hint="lng"/>
     </LinearLayout>
     <Button
