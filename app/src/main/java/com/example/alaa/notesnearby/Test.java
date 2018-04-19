@@ -36,7 +36,7 @@ public class Test extends AppCompatActivity {
         signup = findViewById(R.id.signup);
         createnote = findViewById(R.id.createnote);
 
-        result = findViewById(R.id.username);
+        result = findViewById(R.id.result);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
