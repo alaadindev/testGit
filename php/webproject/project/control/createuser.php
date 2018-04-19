@@ -15,6 +15,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
           $stmt->execute();
           $stmt->close();
           $conn->close();
+          $res =array();
+          $res['success']="true";
+          $out = json_encode($res);
+          echo $out;
+
         }
         else{
          echo $conn->error;

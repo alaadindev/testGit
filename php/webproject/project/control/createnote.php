@@ -26,7 +26,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
             echo "<br>" . $title .'<br>'. $contents .'<br>' . $lat .' : '. $lng;
             echo "$username : $noteID";
             $sql = "INSERT INTO owner (username, noteID) VALUES ('$username', '$noteID')";
-            $conn->query($sql);
+            if($conn->query($sql)){
+              $success = "true";
+              $out = json_encode($succes);
+              echo $out;
+            }
             $stmt->close();
             $conn->close();
           }else{

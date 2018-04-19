@@ -1,6 +1,9 @@
 package com.example.alaa.notesnearby;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +19,8 @@ public class Test extends AppCompatActivity {
     EditText ownername,ownerpass,notetitle,notecontent,notelat,notelng;
     Button login,signup,createnote;
     TextView result;
+    ReceiverServer receiverserver;
+    IntentFilter intentfilter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +55,15 @@ public class Test extends AppCompatActivity {
                 signup();
             }
         });
+        intentfilter = new IntentFilter();
+        intentfilter.addAction("signup_true");
+        intentfilter.addAction("signup_false");
+        intentfilter.addAction("login_true");
+        intentfilter.addAction("login_false");
+        intentfilter.addAction("createnote_true");
+        intentfilter.addAction("createnote_false");
+        receiverserver = new ReceiverServer();
+        registerReceiver(receiverserver,intentfilter);
     }
     public void login(){
         String user = userlogin.getText().toString();
@@ -72,6 +86,14 @@ public class Test extends AppCompatActivity {
         intent.putExtra("phone",phone);
         startService(intent);
     }
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(receiverserver);
+    }
+    public void onResume() {
+        super.onResume();
+        registerReceiver(receiverserver,intentfilter);
+    }
     public void createnote(){
         Intent intent = new Intent(this, UserSession.class);
         intent.setAction("createnote");
@@ -88,6 +110,33 @@ public class Test extends AppCompatActivity {
         intent.putExtra("lat", lat);
         intent.putExtra("lng",lng);
         startService(intent);
+    }
+
+    public void onSignup(boolean value){
+        if(value){
+            result.setText("true");
+        }else{
+            result.setText("");
+        }
+    }
+    private class ReceiverServer extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String act = intent.getAction();
+            switch(act) {
+                case "signup_true":
+                    onSignup(true);
+                    break;
+                case "login_false":
+                    onSignup(false);
+                    break;
+
+
+            }
+
+        }
+
     }
 
 }
