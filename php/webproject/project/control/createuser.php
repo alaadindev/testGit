@@ -1,7 +1,8 @@
 <?php
 require 'main.php';
-?>
-<?php
+
+$res = array();
+$res['success']="false";
 if ($_SERVER['REQUEST_METHOD']==='POST'){
   if(isset($_POST['username'])
     &&isset($_POST['password'])
@@ -15,14 +16,12 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
           $stmt->execute();
           $stmt->close();
           $conn->close();
-          $res =array();
           $res['success']="true";
-          $out = json_encode($res);
-          echo $out;
+
 
         }
         else{
-         echo $conn->error;
+
         }
 
       }else{
@@ -35,5 +34,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
 }else{
 
 }
-
+$out = json_encode($res);
+echo $out;
 ?>

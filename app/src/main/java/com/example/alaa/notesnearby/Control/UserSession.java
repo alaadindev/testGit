@@ -42,7 +42,6 @@ public class UserSession extends Service {
         String user = intent.getStringExtra("user");
         String pass = intent.getStringExtra("pass");
         String phone = intent.getStringExtra("phone");
-        Server server= new Server(this);
         final String user1=user,pass1=pass,phone1=phone;
         final Context context = this;
         Thread thread = new Thread(new Runnable() {
@@ -53,9 +52,6 @@ public class UserSession extends Service {
             }
         });
         thread.start();
-
-
-
 
     }
     public void createnote(Intent intent){

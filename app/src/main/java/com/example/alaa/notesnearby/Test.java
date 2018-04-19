@@ -116,7 +116,7 @@ public class Test extends AppCompatActivity {
         if(value){
             result.setText("true");
         }else{
-            result.setText("");
+            result.setText("false");
         }
     }
     private class ReceiverServer extends BroadcastReceiver {
@@ -128,7 +128,7 @@ public class Test extends AppCompatActivity {
                 case "signup_true":
                     onSignup(true);
                     break;
-                case "login_false":
+                case "signup_false":
                     onSignup(false);
                     break;
 

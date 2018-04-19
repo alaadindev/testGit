@@ -1,7 +1,9 @@
-  GNU nano 2.9.3                    createnote.php
 <?php
 require 'main.php';
-if ($_SERVER['REQUEST_METHOD']==='POST'){
+
+$res = array();
+$res['success']="false";
+if($_SERVER['REQUEST_METHOD']==="POST"){
   if(isset($_POST['username'])&&
       isset($_POST['password'])&&
       isset($_POST['title'])&&
@@ -22,34 +24,33 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
             $stmt->bind_param('ssdd',$title, $contents, $lat, $lng);
             $stmt->execute();
             $noteID=(int)$conn->insert_id;
-            echo $conn->error;
-            echo "<br>" . $title .'<br>'. $contents .'<br>' . $lat .' : '. $lng;
-            echo "$username : $noteID";
+
             $sql = "INSERT INTO owner (username, noteID) VALUES ('$username', '$noteID')";
             if($conn->query($sql)){
-              $success = "true";
-              $out = json_encode($succes);
-              echo $out;
+              $res['success']="true";
+
             }
             $stmt->close();
             $conn->close();
           }else{
-            echo $conn->error . "h";
+            //echo $conn->error . "h";
           }
         }else{
-          echo "wrong password or username";
-          $conn->close();
+          //echo "wrong password or username";
+          //$conn->close();
         }
       }else{
-          echo "error";
-          echo $title . "" . $contents . $lat . $lng;
+          //echo "error";
+          //echo $title . "" . $contents . $lat . $lng;
       }
 
     }else{
-    echo "fill the fields plz";
+    //echo "fill the fields plz";
     }
 }else{
 
 }
 
+$out = json_encode($res);
+echo $out;
 ?>

@@ -1,5 +1,7 @@
 <?php
 require 'main.php';
+$res =array();
+$res['succes']="false";
 if($_SERVER['REQUEST_METHOD']==="POST"){
     if(isset($_POST ['username'])&&
         isset($_POST['password'])&&
@@ -15,22 +17,23 @@ if($_SERVER['REQUEST_METHOD']==="POST"){
               if($result->num_rows>0){
                 $sql="SELECT *, (6371 * acos (cos ( radians($lat) )".
                 "* cos( radians( lat ) )* cos( radians( lng ) - radians($lng) )".
-                "+ sin ( radians($lat) )* sin( radians( lat ) ))) AS distance FROM notes HAVING distance > 0 ORDER BY distance LIMIT 0 , 20";
+                "+ sin ( radians($lat) )* sin( radians( lat ) ))) AS distance FROM notes HAVING distance < 20 ORDER BY distance LIMIT 0 , 500";
                 $result = $conn->query($sql);
-                header('content-type: application/json');
-                $data = array();
                 while($row=$result->fetch_assoc()){
                   $data[] = $row;
                 }
-                echo json_encode($data);
+                $res['succes']="true";
+                $res['data']=$data;
+
               }else{
-                echo "wrong password or username";
+                //echo "wrong password or username";
               }
           }else{
-            echo "invalid input";
+            //echo "invalid input";
           }
         }else{
-          echo "fill the fields";
+          //echo "fill the fields";
         }
 }
+echo json_encode($res);
 ?>
