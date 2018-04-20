@@ -4,11 +4,23 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.example.alaa.notesnearby.Model.Server;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class UserSession extends Service {
+    static String userlog="";
+    static String passlog="";
+    static boolean islogin=false;
+    ReceiverServer receiverserver = new ReceiverServer();
+    IntentFilter intentfilter = new IntentFilter();
+
     public UserSession() {
 
     }
@@ -17,6 +29,15 @@ public class UserSession extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String act =intent.getAction();
+        IntentFilter intentfilter = new IntentFilter();
+        intentfilter.addAction("signup_true");
+        intentfilter.addAction("signup_false");
+        intentfilter.addAction("login_true");
+        intentfilter.addAction("login_false");
+        intentfilter.addAction("createnote_true");
+        intentfilter.addAction("createnote_false");
+
+        registerReceiver(receiverserver,intentfilter);
         switch (act){
             case "login":
                 login(intent);
@@ -34,7 +55,17 @@ public class UserSession extends Service {
     public void login(Intent intent){
         String user = intent.getStringExtra("user");
         String pass = intent.getStringExtra("pass");
-
+        final String user1 = user;
+        final String pass1 = pass;
+        final Context context = this;
+        Thread thread = new Thread(new Runnable() {
+            Server server= new Server(context);
+            @Override
+            public void run() {
+                server.login(user1, pass1);
+            }
+        });
+        thread.start();
 
 
     }
@@ -55,30 +86,72 @@ public class UserSession extends Service {
 
     }
     public void createnote(Intent intent){
+        SharedPreferences shared = getSharedPreferences("log",MODE_PRIVATE);
+
+        final String user = shared.getString("user","");
+        final String pass = shared.getString("pass","");
+
         String title = intent.getStringExtra("title");
         String content = intent.getStringExtra("content");
         String lat = intent.getStringExtra("lat");
         String lng = intent.getStringExtra("lng");
-
+        final String title1=title;
+        final String content1 = content;
+        final String lat1 = lat;
+        final String lng1 = lng;
+        final Context context = this;
+        Log.v("createnoteusersession:",user +"  "+ pass +"  "+ title + "  " + content +"  "+ lat +"  "+ lng);
+        Thread thread = new Thread(new Runnable() {
+            Server server= new Server(context);
+            @Override
+            public void run() {
+                server.createnote(user,pass,title1,content1,lat1,lng1);
+            }
+        });
+        thread.start();
 
 
     }
+    public void isLogin(){
 
+    }
     @Override
     public IBinder onBind(Intent intent) {
         return null;
 
     }
     public void onSignup(boolean value){
-        if(value){
 
+    }
+    public void onLogin(boolean value, Intent intent)  {
+        if(true){
+            String data = intent.getStringExtra("data");
+            try {
+                JSONObject jsob =new JSONObject(data);
+                SharedPreferences shared = getSharedPreferences("log",MODE_PRIVATE);
+                SharedPreferences.Editor edit =shared.edit();
+                edit.putString("user",jsob.getString("user"));
+                edit.putString("pass",jsob.getString("pass"));
+                edit.apply();
+                Log.v("onlogin",jsob.getString("user")+jsob.getString("user"));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }else{
 
         }
     }
-    public void onLogin(boolean value){
+    public void onCreateNote(boolean value){
 
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiverserver);
+    }
+
     private class ReceiverServer extends BroadcastReceiver{
 
         @Override
@@ -92,11 +165,18 @@ public class UserSession extends Service {
                     onSignup(false);
                     break;
                 case "login_true":
-                    onLogin(true);
+                    onLogin(true,intent);
                     break;
                 case "login_false":
-                    onLogin(false);
+                    onLogin(false,intent);
                     break;
+                case "createnote_true":
+                    onCreateNote(true);
+                    break;
+                case "createnote_false":
+                    onCreateNote(false);
+                    break;
+
 
             }
 

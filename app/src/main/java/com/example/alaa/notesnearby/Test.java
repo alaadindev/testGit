@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,6 +54,12 @@ public class Test extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 signup();
+            }
+        });
+        createnote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createnote();
             }
         });
         intentfilter = new IntentFilter();
@@ -110,9 +117,24 @@ public class Test extends AppCompatActivity {
         intent.putExtra("lat", lat);
         intent.putExtra("lng",lng);
         startService(intent);
+
     }
 
     public void onSignup(boolean value){
+        if(value){
+            result.setText("true");
+        }else{
+            result.setText("false");
+        }
+    }
+    public void onCreateNote(boolean value){
+        if(value){
+            result.setText("true");
+        }else{
+            result.setText("false");
+        }
+    }
+    public void onLogin(boolean value){
         if(value){
             result.setText("true");
         }else{
@@ -124,6 +146,7 @@ public class Test extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String act = intent.getAction();
+            System.out.print("onreceive"+act);
             switch(act) {
                 case "signup_true":
                     onSignup(true);
@@ -131,6 +154,20 @@ public class Test extends AppCompatActivity {
                 case "signup_false":
                     onSignup(false);
                     break;
+                case "login_true":
+                    onLogin(true);
+                    break;
+                case "login_false":
+                    onLogin(false);
+                    break;
+                case "createnote_true":
+                    onCreateNote(true);
+                    break;
+                case "createnote_false":
+                    onCreateNote(false);
+
+                    break;
+
 
 
             }

@@ -23,7 +23,32 @@ public class Server {
         this.context = context;
     }
     public void login(String user, String pass){
+        try {
+            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/getuser.php");
+            HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
+            urlcon.setDoOutput(true);
+            urlcon.setRequestMethod("POST");
+            urlcon.setDoInput(true);
+            urlcon.setConnectTimeout(15000);
+            String req = "username=" + user + "&password=" + pass;
+            urlcon.setFixedLengthStreamingMode(req.getBytes().length);
+            PrintWriter out = new PrintWriter(urlcon.getOutputStream());
+            out.print(req);
+            out.flush();
+            out.close();
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
+            String data = in.readLine();
+            in.close();
+            sendResult(data,"login");
+            Log.v("in",data);
 
+        }
+
+        catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     public void signup(String user, String pass, String phone){
         Log.v("out","user:"+user+" pass:"+pass + " phone:"+phone);
@@ -43,7 +68,7 @@ public class Server {
                     BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
                     String data = in.readLine();
                     in.close();
-                    sendResult(data);
+                    sendResult(data,"signup");
                     Log.v("in",data);
 
                 }
@@ -56,23 +81,73 @@ public class Server {
 
 
     }
-    public void createnote(String title, String content, String lat, String lng){
-        
+    public void createnote(String user, String pass, String title, String content, String lat, String lng){
+        try {
+            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/createnote.php");
+            HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
+            urlcon.setDoOutput(true);
+            urlcon.setRequestMethod("POST");
+            urlcon.setDoInput(true);
+            urlcon.setConnectTimeout(15000);
+            String req = "username="+user+"&password="+pass+"&title="+title+"&contents="+content+"&lat="+lat+"&lng="+lng;
+            urlcon.setFixedLengthStreamingMode(req.getBytes().length);
+            PrintWriter out = new PrintWriter(urlcon.getOutputStream());
+            out.print(req);
+            out.flush();
+            out.close();
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
+            String data = in.readLine();
+            in.close();
+            Log.v("createnoteserver:","username="+user+"&password="+pass+"&title="+title+"&contents="+content+"&lat="+lat+"&lng="+lng);
+            sendResult(data,"createnote");
+            Log.v("serverin",data);
+
+        }
+
+        catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void sendResult(String data) throws JSONException {
+    public void sendResult(String data,String method) throws JSONException {
         Intent intent = new Intent();
         intent.putExtra("data",data);
         JSONObject jsdata = new JSONObject(data);
         String success = jsdata.getString("success");
-        Log.v("success","" + success);
-        if(success.equals("true")){
-            intent.setAction("signup_true");
-            context.sendBroadcast(intent);
-        }else{
-            intent.setAction("signup_false");
-            context.sendBroadcast(intent);
+        Log.v("success","" + method);
+        switch (method){
+            case "signup":
+                if(success.equals("true")){
+                intent.setAction("signup_true");
+                context.sendBroadcast(intent);
+            }else{
+                intent.setAction("signup_false");
+                context.sendBroadcast(intent);
+            }
+                break;
+            case "login":
+                if(success.equals("true")){
+                    intent.setAction("login_true");
+                    context.sendBroadcast(intent);
+                }else{
+                    intent.setAction("login_false");
+                    context.sendBroadcast(intent);
+                }
+                break;
+            case "createnote":
+                if(success.equals("true")){
+                    intent.setAction("createnote_true");
+                    context.sendBroadcast(intent);
+                }else{
+                    intent.setAction("createnote_false");
+                    context.sendBroadcast(intent);
+
+                }
+                break;
         }
+
 
     }
 
