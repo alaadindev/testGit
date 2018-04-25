@@ -13,12 +13,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.alaa.notesnearby.Control.UserSession;
+import com.example.alaa.notesnearby.View.MapsView;
 
 public class Test extends AppCompatActivity {
     EditText userlogin,passlogin;
     EditText usersignup,passsignup,phonesignup;
     EditText ownername,ownerpass,notetitle,notecontent,notelat,notelng;
-    Button login,signup,createnote;
+    Button login,signup,createnote,showmap;
     TextView result;
     ReceiverServer receiverserver;
     IntentFilter intentfilter;
@@ -41,6 +42,7 @@ public class Test extends AppCompatActivity {
         login = findViewById(R.id.login);
         signup = findViewById(R.id.signup);
         createnote = findViewById(R.id.createnote);
+        showmap = findViewById(R.id.openmap);
 
         result = findViewById(R.id.result);
 
@@ -60,6 +62,13 @@ public class Test extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createnote();
+            }
+        });
+        showmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Test.this,MapsView.class);
+                startActivity(intent);
             }
         });
         intentfilter = new IntentFilter();
