@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.alaa.notesnearby.Control.UserSession;
+import com.example.alaa.notesnearby.View.MapsView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class Server {
     Context context;
@@ -110,6 +112,36 @@ public class Server {
             e.printStackTrace();
         }
     }
+    public void updateNote(String user, String pass, String lat, String lng){
+        try{
+            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/getnotes.php");
+            HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
+            urlcon.setDoInput(true);
+            urlcon.setRequestMethod("POST");
+            urlcon.setConnectTimeout(15000);
+            String req = "username="+user+"&password="+pass+"&lat="+lat+"&lng="+lng;
+            urlcon.setFixedLengthStreamingMode(req.getBytes().length);
+            PrintWriter out = new PrintWriter(urlcon.getOutputStream());
+            out.print(req);
+            out.flush();
+            out.close();
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
+            String data = in.readLine();
+            in.close();
+
+            saveUpadate(data);
+
+
+        }catch (Exception e){
+
+        }
+    }
+    public void saveUpadate(String data){
+        ArrayList<Note> notes =Note.getNoteFromJSON(data);
+        Log.v("log",notes.get(0).getLng()+"");
+        LocalData.storeNotes(notes,context);
+        Log.v("log",data);
+    }
 
     public void sendResult(String data,String method) throws JSONException {
         Intent intent = new Intent();
@@ -146,6 +178,10 @@ public class Server {
 
                 }
                 break;
+            case "update":
+                intent.setAction("update");
+                context.sendBroadcast(intent);
+                Log.v("Log","Server update sendBroadcast");
         }
 
 

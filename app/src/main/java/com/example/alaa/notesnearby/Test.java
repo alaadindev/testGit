@@ -19,7 +19,7 @@ public class Test extends AppCompatActivity {
     EditText userlogin,passlogin;
     EditText usersignup,passsignup,phonesignup;
     EditText ownername,ownerpass,notetitle,notecontent,notelat,notelng;
-    Button login,signup,createnote,showmap;
+    Button login,signup,createnote,showmap,test;
     TextView result;
     ReceiverServer receiverserver;
     IntentFilter intentfilter;
@@ -43,6 +43,7 @@ public class Test extends AppCompatActivity {
         signup = findViewById(R.id.signup);
         createnote = findViewById(R.id.createnote);
         showmap = findViewById(R.id.openmap);
+        test = findViewById(R.id.test);
 
         result = findViewById(R.id.result);
 
@@ -71,6 +72,12 @@ public class Test extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         intentfilter = new IntentFilter();
         intentfilter.addAction("signup_true");
         intentfilter.addAction("signup_false");
@@ -78,6 +85,7 @@ public class Test extends AppCompatActivity {
         intentfilter.addAction("login_false");
         intentfilter.addAction("createnote_true");
         intentfilter.addAction("createnote_false");
+        intentfilter.addAction("update");
         receiverserver = new ReceiverServer();
         registerReceiver(receiverserver,intentfilter);
     }
@@ -150,6 +158,10 @@ public class Test extends AppCompatActivity {
             result.setText("false");
         }
     }
+    public void update(Intent intent){
+        String notes = intent.getStringExtra("data");
+        result.setText(notes);
+    }
     private class ReceiverServer extends BroadcastReceiver {
 
         @Override
@@ -174,10 +186,11 @@ public class Test extends AppCompatActivity {
                     break;
                 case "createnote_false":
                     onCreateNote(false);
-
                     break;
-
-
+                case "update":
+                    Log.v("log","test update receiver reached");
+                    update(intent);
+                    break;
 
             }
 

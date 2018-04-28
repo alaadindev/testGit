@@ -9,7 +9,9 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.alaa.notesnearby.MainActivity;
 import com.example.alaa.notesnearby.Model.Server;
+import com.example.alaa.notesnearby.Model.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +20,7 @@ public class UserSession extends Service {
     static String userlog="";
     static String passlog="";
     static boolean islogin=false;
+    static boolean isupdating=false;
     ReceiverServer receiverserver = new ReceiverServer();
     IntentFilter intentfilter = new IntentFilter();
 
@@ -134,7 +137,7 @@ public class UserSession extends Service {
                 edit.putString("pass",jsob.getString("pass"));
                 edit.apply();
                 Log.v("onlogin",jsob.getString("user")+jsob.getString("user"));
-
+                startUpdate();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -143,6 +146,15 @@ public class UserSession extends Service {
         }
     }
     public void onCreateNote(boolean value){
+
+    }
+    public void startUpdate(){
+        if(!isupdating){
+            Log.v("log","work from usersession");
+            Intent intent = new Intent(UserSession.this,Tracker.class);
+            startService(intent);
+            isupdating =true;
+        }
 
     }
 

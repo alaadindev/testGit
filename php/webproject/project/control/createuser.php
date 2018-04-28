@@ -3,6 +3,7 @@ require 'main.php';
 
 $res = array();
 $res['success']="false";
+$res['error']="0";
 if ($_SERVER['REQUEST_METHOD']==='POST'){
   if(isset($_POST['username'])
     &&isset($_POST['password'])
@@ -21,18 +22,18 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
 
         }
         else{
-
+          $res['error']="sql_level";
         }
 
       }else{
-
+          $res['error']="invalid_input";
       }
 
     }else{
-
+      $res['error']="invalid_input";
     }
 }else{
-
+  $res['error']="php_level";
 }
 $out = json_encode($res);
 echo $out;
