@@ -9,6 +9,9 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.alaa.notesnearby.Model.LocalData;
 import com.example.alaa.notesnearby.Model.Note;
@@ -18,7 +21,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -28,6 +34,10 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
     private static GoogleMap mMap;
     static ArrayList<Note> notes =new ArrayList<>();
     Double lat,lng;
+    private Marker user;
+    Button makenote,explored;
+    private static boolean islooping=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,19 +50,50 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
         startService(intent2);
         //LocalData localData =new LocalData(this);
         //notes = LocalData.getNotes(this);
+        if(!islooping){
+            loop();
+            islooping=true;
+        }
 
+        makenote = findViewById(R.id.makenote);
+        explored = findViewById(R.id.explored);
+
+        makenote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsView.this,MakeNote.class);
+                startActivity(intent);
+            }
+        });
+        explored.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+    public void loop(){
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                updateLocation();
                 updateNotes();
-                handler.postDelayed(this, 15000);
+                handler.postDelayed(this,25000);
             }
         };
-
+        final Handler handler1 = new Handler();
+        final Runnable runnable1 = new Runnable() {
+            @Override
+            public void run() {
+                updateLocation();
+                checkNearBy();
+                handler1.postDelayed(this,9000);
+            }
+        };
 //Start
-        handler.postDelayed(runnable, 1000);
+        handler.postDelayed(runnable, 25000);
+        handler1.postDelayed(runnable1, 9000);
+
     }
 
 
@@ -97,8 +138,17 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
         SharedPreferences share = getSharedPreferences("log",MODE_PRIVATE);
         double lat =Double.parseDouble(share.getString("lat",null));
         double lng = Double.parseDouble(share.getString("lng",null));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title("me"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lng),1));
+            if(user==null){
+                user =mMap.addMarker(new MarkerOptions().position(
+                        new LatLng(lat,lng)).title("me").
+                        icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+            }else{
+                user.setPosition(new LatLng(lat,lng));
+            }
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lng),10));
+        Log.v("loc1",lat +" : "+ lng);
+
     }
     public void updateNotes(){
         ArrayList<Note> notes =LocalData.getNotes(this);
@@ -106,5 +156,29 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
             mMap.addMarker(new MarkerOptions().position(
                     new LatLng(notes.get(i).getLat(), notes.get(i).getLng())).title(notes.get(i).getTitle()));
         }
+    }
+    public void checkNearBy(){
+        double latstart = user.getPosition().latitude;
+        double lngstart = user.getPosition().longitude;
+        Location locationA= new Location("A");
+        locationA.setLatitude(latstart);
+        locationA.setLongitude(lngstart);
+        Location locationB = new Location("B");
+
+
+        double latnote ,lngnote;
+        float result[] = new float[0];
+        ArrayList<Note> notes =LocalData.getNotes(this);
+        for(int i=0;i<notes.size();i++){
+            locationB.setLatitude(notes.get(i).getLat());
+            locationB.setLongitude(notes.get(i).getLng());
+            float distance = locationB.distanceTo(locationB);
+            if(distance<20){
+                explore(notes.get(i));
+            }
+        }
+    }
+    public void explore(Note note){
+
     }
 }

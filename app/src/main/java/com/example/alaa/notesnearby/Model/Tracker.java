@@ -20,6 +20,8 @@ import android.util.Log;
 import com.example.alaa.notesnearby.MainActivity;
 import com.example.alaa.notesnearby.View.MapsView;
 
+import java.util.ArrayList;
+
 public class Tracker extends Service implements LocationListener {
     final Context context = this;
     boolean isGPSenable = false;
@@ -68,6 +70,28 @@ public class Tracker extends Service implements LocationListener {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
+    public void checkNearBy(double lat, double lng){
+        Location locationA= new Location("A");
+        locationA.setLatitude(lat);
+        locationA.setLongitude(lng);
+        Location locationB = new Location("B");
+
+
+        double latnote ,lngnote;
+        float result[] = new float[0];
+        ArrayList<Note> notes =LocalData.getNotes(this);
+        for(int i=0;i<notes.size();i++){
+            locationB.setLatitude(notes.get(i).getLat());
+            locationB.setLongitude(notes.get(i).getLng());
+            float distance = locationB.distanceTo(locationB);
+            if(distance<20){
+                explore(notes.get(i));
+            }
+        }
+    }
+    public void explore(Note note){
+
+    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -82,6 +106,7 @@ public class Tracker extends Service implements LocationListener {
         final String pass = share.getString("pass",null);
         final String lat = location.getLatitude()+"";
         final String lng = location.getLongitude()+"";
+        checkNearBy(location.getLatitude(),location.getLongitude());
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {

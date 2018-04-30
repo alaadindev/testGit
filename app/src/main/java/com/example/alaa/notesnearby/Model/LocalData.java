@@ -42,26 +42,20 @@ public class LocalData {
     public static void storeNotes(ArrayList<Note> note,Context context){
         openData(context);
         notes=note;
-        Log.v("local","storenote 1");
         String sql="drop table if exists notes";
-        Log.v("local","storenote 2");
         db.execSQL(sql);
-        Log.v("local","storenote 3");
         setup();
-        Log.v("local","storenote 4");
         for(int i=0;i<notes.size();i++) {
-            Log.v("local","storenote 5");
             String sql2 = "INSERT INTO notes(noteID, title, contents, date,lat, lng)" +
                     " VALUES('" + notes.get(i).getNoteId() + "','" +
                     notes.get(i).getTitle() + "','" + notes.get(i).getContent() + "','" +
                     notes.get(i).getDate() + "','" + notes.get(i).getLat() + "','" +
                     notes.get(i).getLng() + "')";
-            Log.v("local","storenote 6");
-            Log.v("local",notes.get(i).getLat()+"");
             db.execSQL(sql2);
             Log.v("local","storenote 7");
 
         }
+        db.close();
     }
     public static void explored(String noteid){
 
@@ -81,7 +75,6 @@ public class LocalData {
         Cursor cursor =db.rawQuery(sql,null);
 
         while(cursor.moveToNext()){
-            Log.v("lng",cursor.getString(cursor.getColumnIndex("lng")));
             notes.add(Note.getNoteFromSQL(
                     cursor.getString(cursor.getColumnIndex("noteID")),
                     cursor.getString(cursor.getColumnIndex("title")),
@@ -91,7 +84,7 @@ public class LocalData {
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex("lng")))));
 
         }
-
+        db.close();
         return notes;
     }
 
