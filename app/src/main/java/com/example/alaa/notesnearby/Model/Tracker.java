@@ -176,6 +176,7 @@ public class Tracker extends Service implements LocationListener {
         }catch (Exception e){
 
         }
+
         return location;
     }
 }
