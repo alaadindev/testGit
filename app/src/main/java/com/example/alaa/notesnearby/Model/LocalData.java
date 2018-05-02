@@ -96,6 +96,10 @@ public static void setup(){
     String sql2 = "CREATE TABLE if not exists user(username String PRIMARY KEY"+
             ", password String , phone INTEGER)";
     db.execSQL(sql2);
+    String sql3 ="CREATE TABLE IF NOT EXISTS explored(username String, noteID INTEGER)";
+    db.execSQL(sql3);
+    String sql4 = "CREATE TABLE IF NOT EXISTS owner(username String, noteID INTEGER)";
+    db.execSQL(sql4);
 }
 
 }
