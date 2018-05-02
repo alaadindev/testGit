@@ -29,10 +29,20 @@
   lng: <input type="text" name="lng"><br>
   <input type="submit" name="submit">
 </form><br>
+login:
+<br>
 <form action="./control/getuser.php" method="post">
-  username: <input type+"text" name="username">
-  password: <input type:"text" name="password">
+  username: <input type="text" name="username">
+  password: <input type="text" name="password">
   <input type="submit" name="sumbit">
+</form>
+<br>
+explored notes:
+<br>
+<form action="./control/getusernotes.php" method="post">
+  username: <input type="text" name="username">
+  password: <input type="text" name="password">
+  <input type="submit" name="submit">
 </form>
 </body>
 
