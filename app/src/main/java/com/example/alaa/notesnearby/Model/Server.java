@@ -41,8 +41,9 @@ public class Server {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
             String data = in.readLine();
             in.close();
-            sendResult(data,"login");
             Log.v("in",data);
+            updateOwnerExploredNote(user,pass);
+            sendResult(data,"login");
 
         }
 
@@ -103,6 +104,7 @@ public class Server {
             Log.v("createnoteserver:","username="+user+"&password="+pass+"&title="+title+"&contents="+content+"&lat="+lat+"&lng="+lng);
             sendResult(data,"createnote");
             Log.v("serverin",data);
+            updateOwnerExploredNote(user,pass);
 
         }
 
@@ -129,18 +131,75 @@ public class Server {
             String data = in.readLine();
             in.close();
 
-            saveUpadate(data);
+            saveUpdate(data);
 
 
         }catch (Exception e){
 
         }
     }
-    public void saveUpadate(String data){
+    public void addExploreNote(Note note,String user,String pass){
+        try{
+            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/explore.php");
+            HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
+            urlcon.setDoInput(true);
+            urlcon.setRequestMethod("POST");
+            urlcon.setConnectTimeout(15000);
+            String req = "noteID="+note.getNoteId()+"&owner="+note.getOwner();
+            urlcon.setFixedLengthStreamingMode(req.getBytes().length);
+            PrintWriter out = new PrintWriter(urlcon.getOutputStream());
+            out.print(req);
+            out.flush();
+            out.close();
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
+            String data = in.readLine();
+            in.close();
+            updateOwnerExploredNote(user,pass);
+        }catch (Exception e){
+
+        }
+    }
+
+
+    public void updateOwnerExploredNote(String user, String pass){
+        try{
+            Log.v("server","updateOwnerExploreNotes");
+            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/getusernotes.php");
+            HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
+            urlcon.setDoInput(true);
+            urlcon.setRequestMethod("POST");
+            urlcon.setConnectTimeout(15000);
+            String req = "username="+user+"&password="+pass;
+            urlcon.setFixedLengthStreamingMode(req.getBytes().length);
+            PrintWriter out = new PrintWriter(urlcon.getOutputStream());
+            out.print(req);
+            out.flush();
+            out.close();
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
+            String data = in.readLine();
+            in.close();
+
+            LocalData.storeOwnerExploredNotes(data,context);
+
+        }catch (Exception e){
+
+        }
+    }
+    public void saveExploredupdate(Note note){
+
+    }
+    public void saveUserUpdate(String data){
+        ArrayList<Note> notes =Note.getNoteFromJSON(data);
+        Log.v("log",notes.get(0).getLng()+"");
+        LocalData.storeOwnerNotes(notes,context);
+        Log.v("log",data);
+    }
+
+    public void saveUpdate(String data){
         ArrayList<Note> notes =Note.getNoteFromJSON(data);
         Log.v("log",notes.get(0).getLng()+"");
         LocalData.storeNotes(notes,context);
-        Log.v("log",data);
+        Log.v("log23",data);
     }
 
     public void sendResult(String data,String method) throws JSONException {
@@ -148,6 +207,8 @@ public class Server {
         intent.putExtra("data",data);
         JSONObject jsdata = new JSONObject(data);
         String success = jsdata.getString("success");
+        String owner = jsdata.getString("hasowned");
+        String explored = jsdata.getString("hasexplored");
         Log.v("success","" + method);
         switch (method){
             case "signup":
@@ -182,6 +243,20 @@ public class Server {
                 intent.setAction("update");
                 context.sendBroadcast(intent);
                 Log.v("Log","Server update sendBroadcast");
+                break;
+
+            case "ownerexplored":
+                Log.v("server","ownerexplored");
+                if (success.equals("true")) {
+
+                    intent.setAction("ownerexplored");
+                    LocalData.storeOwnerExploredNotes(data,context);
+                    ArrayList<Note> notes1=LocalData.getExploredNotes(context);
+                    Note.explored = notes1;
+                    context.sendBroadcast(intent);
+                }
+                break;
+
         }
 
 

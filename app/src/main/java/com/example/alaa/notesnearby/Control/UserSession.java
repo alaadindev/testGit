@@ -65,6 +65,7 @@ public class UserSession extends Service {
             Server server= new Server(context);
             @Override
             public void run() {
+
                 server.login(user1, pass1);
             }
         });
@@ -108,6 +109,7 @@ public class UserSession extends Service {
             Server server= new Server(context);
             @Override
             public void run() {
+
                 server.createnote(user,pass,title1,content1,lat1,lng1);
             }
         });

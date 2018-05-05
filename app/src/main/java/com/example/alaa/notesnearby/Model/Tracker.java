@@ -12,11 +12,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.alaa.notesnearby.Control.UserSession;
 import com.example.alaa.notesnearby.MainActivity;
 import com.example.alaa.notesnearby.View.MapsView;
 
@@ -70,7 +72,7 @@ public class Tracker extends Service implements LocationListener {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
-    public void checkNearBy(double lat, double lng){
+    public void checkNearBy(Server server,double lat, double lng){
         Location locationA= new Location("A");
         locationA.setLatitude(lat);
         locationA.setLongitude(lng);
@@ -85,11 +87,22 @@ public class Tracker extends Service implements LocationListener {
             locationB.setLongitude(notes.get(i).getLng());
             float distance = locationB.distanceTo(locationB);
             if(distance<20){
-                explore(notes.get(i));
+                explore(server,notes.get(i));
             }
         }
     }
-    public void explore(Note note){
+    public void explore(Server server1,Note note1){
+        SharedPreferences share = getSharedPreferences("log",MODE_PRIVATE);
+        final Server server =server1;
+        final Note note = note1;
+        final String user = share.getString("user",null);
+        final String pass = share.getString("pass",null);
+        Thread thread =new Thread(new Runnable() {
+            @Override
+            public void run() {
+                server.addExploreNote(note, user,pass);
+            }
+        });
 
     }
 
@@ -106,18 +119,21 @@ public class Tracker extends Service implements LocationListener {
         final String pass = share.getString("pass",null);
         final String lat = location.getLatitude()+"";
         final String lng = location.getLongitude()+"";
-        checkNearBy(location.getLatitude(),location.getLongitude());
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
 
                 server.updateNote(user, pass, lat,lng);
+                checkNearBy(server,Double.parseDouble(lat),Double.parseDouble(lng));
             }
         });
 
         thread.start();
 
         String currentLocation = "The location is changed to Lat: " + lat + " Lng: " + lng;
+
+
         Log.v("loc",currentLocation);
 
     }
@@ -136,6 +152,7 @@ public class Tracker extends Service implements LocationListener {
     public void onProviderDisabled(String provider) {
 
     }
+
 
     @SuppressLint("MissingPermission")
     public Location getLocation() {

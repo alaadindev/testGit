@@ -50,10 +50,7 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
         startService(intent2);
         //LocalData localData =new LocalData(this);
         //notes = LocalData.getNotes(this);
-        if(!islooping){
-            loop();
-            islooping=true;
-        }
+
 
         makenote = findViewById(R.id.makenote);
         explored = findViewById(R.id.explored);
@@ -68,9 +65,14 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
         explored.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(MapsView.this, Explore.class);
+                startActivity(intent);
             }
         });
+        if(!islooping){
+            loop();
+            islooping=true;
+        }
     }
     public void loop(){
         final Handler handler = new Handler();
@@ -128,10 +130,12 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
         mMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title("updated"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lng),1));
     }
-    public static void addNotes(ArrayList<Note> notes){
+    public static void addNotes(ArrayList<Note> newnotes){
         for(int i=0;i<notes.size();i++){
-            mMap.addMarker(new MarkerOptions().position(
-                    new LatLng(notes.get(i).getLng(),notes.get(i).getLng())).title(notes.get(i).getTitle()));
+            if(!notes.contains(newnotes.get(i))) {
+                mMap.addMarker(new MarkerOptions().position(
+                        new LatLng(notes.get(i).getLng(), notes.get(i).getLng())).title(notes.get(i).getTitle()));
+            }
         }
     }
     public void updateLocation(){
@@ -151,10 +155,14 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
 
     }
     public void updateNotes(){
-        ArrayList<Note> notes =LocalData.getNotes(this);
-        for(int i=0;i<notes.size();i++){
-            mMap.addMarker(new MarkerOptions().position(
-                    new LatLng(notes.get(i).getLat(), notes.get(i).getLng())).title(notes.get(i).getTitle()));
+        ArrayList<Note> newnotes =LocalData.getNotes(this);
+        for(int i=0;i<newnotes.size();i++){
+            if(!notes.contains(newnotes.get(i))) {
+                mMap.addMarker(new MarkerOptions().position(
+                        new LatLng(newnotes.get(i).getLat(), newnotes.get(i).getLng())).title(newnotes.get(i).getTitle()));
+                Log.v("owner", newnotes.get(i).getOwner());
+                notes.add(newnotes.get(i));
+            }
         }
     }
     public void checkNearBy(){

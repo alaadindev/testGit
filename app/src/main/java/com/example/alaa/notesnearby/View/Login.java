@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.alaa.notesnearby.Control.UserSession;
+import com.example.alaa.notesnearby.Model.LocalData;
 import com.example.alaa.notesnearby.R;
 
 public class Login extends AppCompatActivity {
@@ -59,6 +60,8 @@ public class Login extends AppCompatActivity {
         intentfilter.addAction("update");
     receiverserver = new ReceiverServer();
     registerReceiver(receiverserver,intentfilter);
+
+        //LocalData.clean(this);
 }
     public void login(){
         String user = userlogin.getText().toString();
@@ -115,7 +118,7 @@ private class ReceiverServer extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String act = intent.getAction();
-        System.out.print("onreceive"+act);
+        Log.v("login",act);
         switch(act) {
             case "signup_true":
                 onSignup(true);

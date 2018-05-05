@@ -44,6 +44,12 @@ explored notes:
   password: <input type="text" name="password">
   <input type="submit" name="submit">
 </form>
+<br>
+<form action="./control/explore.php" method="post">
+  username: <input type="text" name="username">
+  NoteID: <input type="text" name="noteID">
+  <input type="submit" name="submit">
+</form>
 </body>
 
 </html>
