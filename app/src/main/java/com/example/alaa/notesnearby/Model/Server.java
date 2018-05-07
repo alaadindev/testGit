@@ -41,7 +41,7 @@ public class Server {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
             String data = in.readLine();
             in.close();
-            Log.v("in",data);
+            Log.v("server","Login: "+ data);
             updateOwnerExploredNote(user,pass);
             sendResult(data,"login");
 
@@ -145,7 +145,7 @@ public class Server {
             urlcon.setDoInput(true);
             urlcon.setRequestMethod("POST");
             urlcon.setConnectTimeout(15000);
-            String req = "noteID="+note.getNoteId()+"&owner="+note.getOwner();
+            String req = "noteID="+note.getNoteId()+"&username="+user;
             urlcon.setFixedLengthStreamingMode(req.getBytes().length);
             PrintWriter out = new PrintWriter(urlcon.getOutputStream());
             out.print(req);
@@ -154,6 +154,7 @@ public class Server {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
             String data = in.readLine();
             in.close();
+            Log.v("server","addexplorenote: "+data);
             updateOwnerExploredNote(user,pass);
         }catch (Exception e){
 

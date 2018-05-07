@@ -28,7 +28,7 @@ import java.util.List;
 public class Explore extends AppCompatActivity {
 
     private IntentFilter intentfilter;
-    private ReceiverServer receiverserver;
+
     private ArrayList<Note> owner;
     private ArrayList<Note> explored = new ArrayList<Note>();
     private ListView listview;
@@ -43,6 +43,9 @@ public class Explore extends AppCompatActivity {
     private static boolean isexplore = true;
     static List<Note> oldlist=new ArrayList<Note>();
     Button mynotes, explorednotes;
+
+    Thread thread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,18 +54,22 @@ public class Explore extends AppCompatActivity {
         explorednotes = (Button)findViewById(R.id.explored);
         listview =(ListView)findViewById(R.id.listexplored);
 
+
         listitem = new ArrayList<String>(Arrays.asList(items));
         adapter = new ArrayAdapter<String>(Explore.this,
                 android.R.layout.simple_expandable_list_item_1,
                 listitem);
         server= new Server(this);
+
         SharedPreferences share =getSharedPreferences("log",MODE_PRIVATE);
         final String user =share.getString("user",null);
+
         final String pass = share.getString("pass",null);
-        Thread thread = new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 server.updateOwnerExploredNote(user,pass);
+                Log.v("explore","update");
             }
         });
         thread.start();
@@ -86,21 +93,20 @@ public class Explore extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 isexplore=false;
+                update();
             }
         });
         explorednotes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                isexplore=true;
+               update();
             }
         });
-        intentfilter = new IntentFilter();
-        intentfilter.addAction("explored");
-        receiverserver = new ReceiverServer();
-        registerReceiver(receiverserver,intentfilter);
         if(!isupdate){
-            loop();
-            isupdate=true;
+            //loop();
+            //isupdate=true;
+            Log.v("explore","increate");
         }
     }
     public void loop(){
@@ -110,6 +116,7 @@ public class Explore extends AppCompatActivity {
             public void run() {
                 update();
                 handler.postDelayed(this,5000);
+                Log.v("explore","loop");
             }
         };
         final Handler handler1 = new Handler();
@@ -134,43 +141,28 @@ public class Explore extends AppCompatActivity {
                 listid.add(Integer.parseInt(list.get(i).getNoteId()));
 
                 adapter.notifyDataSetChanged();
+
             }
+            Log.v("explore","oldlist"+list.toString());
             oldlist=list;
+
         }
     }
 
     public void onPause() {
         super.onPause();
-        unregisterReceiver(receiverserver);
+
+        isupdate=false;
+
     }
     public void onResume() {
         super.onResume();
-        registerReceiver(receiverserver,intentfilter);
-    }
-    public void onOwner(Intent intent){
-        owner = Note.getNoteFromJSON(intent.getStringExtra("explored"));
 
-        
-    }
-    public void onExplored(Intent intent){
-
-        //explored = Note.getNoteFromJSON(intent.getStringExtra("data"));
 
 
     }
 
-    private class ReceiverServer extends BroadcastReceiver {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.v("explore","ownerexplored receiver");
-            String act = intent.getAction();
-            String success = intent.getStringExtra("success");
-            if(act == "explore" && success=="true"){
-                onExplored(intent);
-            }
 
-        }
 
-    }
 }

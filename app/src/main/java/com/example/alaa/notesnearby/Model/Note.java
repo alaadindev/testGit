@@ -1,5 +1,6 @@
 package com.example.alaa.notesnearby.Model;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -18,8 +19,8 @@ public class Note {
     private double LNG;
     private String OWNER;
 
-    public static List<Note> explored;
-    public static List<Note> owner;
+    public static List<Note> explored = new ArrayList<Note>();
+    public static List<Note> owner = new ArrayList<Note>();
 
     public String getNoteId(){ return NOTEID;}
     public String getTitle(){ return TITLE;}
@@ -28,6 +29,10 @@ public class Note {
     public double getLat(){ return LAT;}
     public double getLng(){ return LNG;}
     public String getOwner(){return OWNER;}
+
+    public Note(){
+
+    }
 
     public Note(JSONObject json){
         setFieldByJSON(json);
@@ -87,10 +92,11 @@ public class Note {
 
             JSONObject JSON = new JSONObject(data);
             Log.v("note","getnotefrom json: "+JSON);
-            JSONArray jsonarray =JSON.getJSONArray("data");
+            JSONArray jsondata =JSON.getJSONArray("data");
+
             ArrayList<Note> notes =new ArrayList<Note>();
-            for(int i=0;i<jsonarray.length();i++){
-                Note note = new Note(jsonarray.getJSONObject(i));
+            for(int i=0;i<jsondata.length();i++){
+                Note note = new Note(jsondata.getJSONObject(i));
                 notes.add(note);
             }
             return notes;
@@ -107,25 +113,37 @@ public class Note {
             String isexplored = JSON.getString("hasexplored");
             ArrayList<Note> owner =new ArrayList<Note>();
             ArrayList<Note> explored = new ArrayList<Note>();
-            JSONArray jsonowner =JSON.getJSONArray("owned");
-            JSONArray jsonexplored =JSON.getJSONArray("explored");
-            if(isowner=="true"){
 
+            JSONArray jsonowner;
+            JSONArray jsonexplored;
+            ArrayList<ArrayList<Note>> notes = new ArrayList<ArrayList<Note>>();
+            try {
+                jsonexplored = JSON.getJSONArray("explored");
+                for(int i=0;i<jsonexplored.length();i++){
+                    Note note = new Note(jsonexplored.getJSONObject(i));
+                    explored.add(note);
+                }
+
+            }catch (Exception e){
+                jsonexplored = null;
+            }
+            jsonowner =JSON.getJSONArray("owned");
+            try {
+                jsonowner =JSON.getJSONArray("owned");
+                for(int i=0;i<jsonowner.length();i++){
+                    Note note = new Note(jsonowner.getJSONObject(i));
+                    owner.add(note);
+                }
+            }catch (Exception e){
+                jsonowner =null;
+            }
+            if(isowner=="true"){
+                owner = new ArrayList<Note>();
             }
             if(isexplored=="true"){
-
+                explored = new ArrayList<Note>();
             }
 
-            ArrayList<ArrayList<Note>> notes = new ArrayList<ArrayList<Note>>();
-
-            for(int i=0;i<jsonowner.length();i++){
-                Note note = new Note(jsonowner.getJSONObject(i));
-                owner.add(note);
-            }
-            for(int i=0;i<jsonexplored.length();i++){
-                Note note = new Note(jsonexplored.getJSONObject(i));
-                explored.add(note);
-            }
             notes.add(owner);
             notes.add(explored);
             return notes;
@@ -133,5 +151,48 @@ public class Note {
             e.printStackTrace();
             return null;
         }
+    }
+    public static ArrayList<Note> getExplorable(Context context) {
+
+
+        List<Note> list1 = Note.owner;
+
+        List<Note> list2 = LocalData.getNotes(context);
+
+        if (list1 == null){
+            list1 = new ArrayList<Note>();
+            list1.add(new Note());
+        }
+        if (list2 == null){
+            list2 = new ArrayList<Note>();
+            list2.add(new Note());
+        }
+// Prepare a union
+            List<Note> union = new ArrayList<Note>(list1);
+            union.addAll(list2);
+// Prepare an intersection
+            List<Note> intersection = new ArrayList<Note>(list1);
+            intersection.retainAll(list2);
+// Subtract the intersection from the union
+            union.removeAll(intersection);
+
+            list1 = Note.explored;
+            list2 = union;
+        if (list1 == null){
+            list1 = new ArrayList<Note>();
+            list1.add(new Note());
+        }
+
+
+// Prepare a union
+            union = new ArrayList<Note>(list1);
+            union.addAll(list2);
+// Prepare an intersection
+            intersection = new ArrayList<Note>(list1);
+            intersection.retainAll(list2);
+// Subtract the intersection from the union
+            union.removeAll(intersection);
+            return (ArrayList<Note>) union;
+
     }
 }

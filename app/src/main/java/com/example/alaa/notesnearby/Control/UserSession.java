@@ -140,6 +140,7 @@ public class UserSession extends Service {
                 edit.apply();
                 Log.v("onlogin",jsob.getString("user")+jsob.getString("user"));
                 startUpdate();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -156,6 +157,7 @@ public class UserSession extends Service {
             Intent intent = new Intent(UserSession.this,Tracker.class);
             startService(intent);
             isupdating =true;
+
         }
 
     }

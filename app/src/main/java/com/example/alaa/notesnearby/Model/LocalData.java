@@ -25,70 +25,76 @@ public class LocalData {
     private static List<Note> owner = new ArrayList<>();
     private static List<Note> explored = new ArrayList<>();
     private static User user = null;
+    static int num=0;
 
     public LocalData(Context context1){
         db = context.openOrCreateDatabase("local.db", Context.MODE_PRIVATE,null);
-        }
-    public static User getUser(){
-        return user;
     }
 
-    public static void addUser(User user){
-        String name = user.getName();
-        String password = user.getPassword();
-        String phone = user.getPhone();
-        setup();
-        String sql2 = "INSERT INTO user (username, password, phone) VALUES ('"
-                +name+"','"+password+"','"+phone+"')";
-        db.execSQL(sql2);
-        db.close();
-
-    }
     public  static void openData(Context context){
+        if (!db.isOpen())
         db = context.openOrCreateDatabase("local.db", Context.MODE_PRIVATE,null);
     }
     public static void storeNotes(ArrayList<Note> note,Context context){
-        openData(context);
-        notes=note;
-        String sql="drop table if exists notes";
-        db.execSQL(sql);
-        setup();
-        for(int i=0;i<notes.size();i++) {
-            String sql2 = "INSERT INTO notes(noteID, title, contents, date,lat, lng,owner)" +
-                    " VALUES('" + notes.get(i).getNoteId() + "','" +
-                    notes.get(i).getTitle() + "','" + notes.get(i).getContent() + "','" +
-                    notes.get(i).getDate() + "','" + notes.get(i).getLat() + "','" +
-                    notes.get(i).getLng() + "','"+ notes.get(i).getOwner()+"')";
-            db.execSQL(sql2);
+
+        try {
+            openData(context);
+            notes = note;
+            String sql = "drop table if exists notes";
+            db.execSQL(sql);
+            setup();
+            for (int i = 0; i < notes.size(); i++) {
+                String sql2 = "INSERT INTO notes(noteID, title, contents, date,lat, lng,owner)" +
+                        " VALUES('" + notes.get(i).getNoteId() + "','" +
+                        notes.get(i).getTitle() + "','" + notes.get(i).getContent() + "','" +
+                        notes.get(i).getDate() + "','" + notes.get(i).getLat() + "','" +
+                        notes.get(i).getLng() + "','" + notes.get(i).getOwner() + "')";
+                db.execSQL(sql2);
 
 
+            }
+
+            db.close();
+            Log.v("local", "storenotes");
+        }catch (Exception e){
+
+            db.close();
+            Log.v("local", "storenotes");
         }
-        db.close();
     }
 
 
     public static ArrayList<Note> getNotes(Context context1){
-        openData(context1);
-        setup();
-        ArrayList<Note> notes = new ArrayList<Note>();
-        String sql ="SELECT noteID, title, contents, date, lat, lng, owner FROM notes";
+        Cursor cursor=null;
+        try {
+            openData(context1);
+            setup();
+            ArrayList<Note> notes = new ArrayList<Note>();
+            String sql = "SELECT noteID, title, contents, date, lat, lng, owner FROM notes";
 
 
-        Cursor cursor =db.rawQuery(sql,null);
+            cursor = db.rawQuery(sql, null);
 
-        while(cursor.moveToNext()){
-            notes.add(Note.getNoteFromSQL(
-                    cursor.getString(cursor.getColumnIndex("noteID")),
-                    cursor.getString(cursor.getColumnIndex("title")),
-                    cursor.getString(cursor.getColumnIndex("contents")),
-                    cursor.getString(cursor.getColumnIndex("date")),
-                    Double.parseDouble(cursor.getString(cursor.getColumnIndex("lat"))),
-                    Double.parseDouble(cursor.getString(cursor.getColumnIndex("lng"))),
-                    cursor.getString(cursor.getColumnIndex("owner"))));
+            while (cursor.moveToNext()) {
+                notes.add(Note.getNoteFromSQL(
+                        cursor.getString(cursor.getColumnIndex("noteID")),
+                        cursor.getString(cursor.getColumnIndex("title")),
+                        cursor.getString(cursor.getColumnIndex("contents")),
+                        cursor.getString(cursor.getColumnIndex("date")),
+                        Double.parseDouble(cursor.getString(cursor.getColumnIndex("lat"))),
+                        Double.parseDouble(cursor.getString(cursor.getColumnIndex("lng"))),
+                        cursor.getString(cursor.getColumnIndex("owner"))));
             }
-        Log.v("local","get notes");
-        db.close();
-        return notes;
+            Log.v("local", "get notes");
+            cursor.close();
+            db.close();
+            return notes;
+        }catch (Exception e){
+            Log.v("local", "getnotes"+e);
+            //db.close();
+            return new ArrayList<Note>();
+        }
+
     }
 
     public static ArrayList<Note> getOwnerNotes(Context context1){
@@ -112,83 +118,119 @@ public class LocalData {
                     cursor.getString(cursor.getColumnIndex("owner"))));
 
         }
+
+        cursor.close();
         db.close();
         return notes;
     }
     public static ArrayList<Note> getExploredNotes(Context context1){
-        openData(context1);
-        setup();
-        ArrayList<Note> notes = new ArrayList<Note>();
-        String sql ="SELECT noteID, title, contents, date, lat, lng, owner FROM explored";
+
+        Cursor cursor=null;
+        try {
+            openData(context1);
+
+            setup();
+            ArrayList<Note> notes = new ArrayList<Note>();
+            String sql = "SELECT noteID, title, contents, date, lat, lng, owner FROM explored";
 
 
-        Cursor cursor =db.rawQuery(sql,null);
+            cursor = db.rawQuery(sql, null);
 
-        while(cursor.moveToNext()){
-            notes.add(Note.getNoteFromSQL(
-                    cursor.getString(cursor.getColumnIndex("noteID")),
-                    cursor.getString(cursor.getColumnIndex("title")),
-                    cursor.getString(cursor.getColumnIndex("contents")),
-                    cursor.getString(cursor.getColumnIndex("date")),
-                    Double.parseDouble(cursor.getString(cursor.getColumnIndex("lat"))),
-                    Double.parseDouble(cursor.getString(cursor.getColumnIndex("lng"))),
-                    cursor.getString(cursor.getColumnIndex("owner"))));
+            while (cursor.moveToNext()) {
+                notes.add(Note.getNoteFromSQL(
+                        cursor.getString(cursor.getColumnIndex("noteID")),
+                        cursor.getString(cursor.getColumnIndex("title")),
+                        cursor.getString(cursor.getColumnIndex("contents")),
+                        cursor.getString(cursor.getColumnIndex("date")),
+                        Double.parseDouble(cursor.getString(cursor.getColumnIndex("lat"))),
+                        Double.parseDouble(cursor.getString(cursor.getColumnIndex("lng"))),
+                        cursor.getString(cursor.getColumnIndex("owner"))));
 
+            }
+
+            cursor.close();
+            db.close();
+            return notes;
+        }catch (Exception e) {
+            cursor.close();
+            db.close();
+            Log.v("local","close issues getExploredNotes: "+e);
+            return null;
         }
-        db.close();
-        return notes;
     }
     public static void storeOwnerNotes(List<Note> note,Context context){
+        try {
+            openData(context);
 
-        notes=note;
-        String sql="drop table if exists owner";
-        db.execSQL(sql);
-        setup();
-        for(int i=0;i<notes.size();i++) {
-            String sql2 = "INSERT INTO owner(noteID, title, contents, date,lat, lng,owner)" +
-                    " VALUES('" + notes.get(i).getNoteId() + "','" +
-                    notes.get(i).getTitle() + "','" + notes.get(i).getContent() + "','" +
-                    notes.get(i).getDate() + "','" + notes.get(i).getLat() + "','" +
-                    notes.get(i).getLng() + "','" + notes.get(i).getOwner()+"')";
-            db.execSQL(sql2);
+            notes = note;
+            String sql = "drop table if exists owner";
+            db.execSQL(sql);
+            setup();
+            for (int i = 0; i < notes.size(); i++) {
+                String sql2 = "INSERT INTO owner(noteID, title, contents, date,lat, lng,owner)" +
+                        " VALUES('" + notes.get(i).getNoteId() + "','" +
+                        notes.get(i).getTitle() + "','" + notes.get(i).getContent() + "','" +
+                        notes.get(i).getDate() + "','" + notes.get(i).getLat() + "','" +
+                        notes.get(i).getLng() + "','" + notes.get(i).getOwner() + "')";
+                db.execSQL(sql2);
 
 
+            }
+            db.close();
+        }catch (Exception e){
+            db.close();
+            Log.v("local","store owner notes"+e);
         }
         Log.v("local","store owner notes");
 
     }
     public static void storeExploredNotes(List<Note> note,Context context){
+        try {
+            openData(context);
+            notes = note;
+            String sql = "drop table if exists explored";
+            db.execSQL(sql);
+            setup();
+            for (int i = 0; i < notes.size(); i++) {
+                String sql2 = "INSERT INTO explored(noteID, title, contents, date,lat, lng,owner)" +
+                        " VALUES('" + notes.get(i).getNoteId() + "','" +
+                        notes.get(i).getTitle() + "','" + notes.get(i).getContent() + "','" +
+                        notes.get(i).getDate() + "','" + notes.get(i).getLat() + "','" +
+                        notes.get(i).getLng() + "','" + notes.get(i).getOwner() + "')";
+                db.execSQL(sql2);
 
-        notes=note;
-        String sql="drop table if exists explored";
-        db.execSQL(sql);
-        setup();
-        for(int i=0;i<notes.size();i++) {
-            String sql2 = "INSERT INTO explored(noteID, title, contents, date,lat, lng,owner)" +
-                    " VALUES('" + notes.get(i).getNoteId() + "','" +
-                    notes.get(i).getTitle() + "','" + notes.get(i).getContent() + "','" +
-                    notes.get(i).getDate() + "','" + notes.get(i).getLat() + "','" +
-                    notes.get(i).getLng() + "','" + notes.get(i).getOwner()+"')";
-            db.execSQL(sql2);
 
-
+            }
+            db.close();
+        }catch (Exception e){
+            db.close();
+            Log.v("local","store explored notes"+e);
         }
         Log.v("local","store explored notes");
 
     }
     public static void storeOwnerExploredNotes(String data, Context context){
-        openData(context);
+        num++;
 
-        Log.v("local","store OwnerExplore Notes: "+data);
-        owner = Note.getOwnerExploredFromJSON(data).get(0);
-        explored = Note.getOwnerExploredFromJSON(data).get(1);
-
-        storeOwnerNotes(owner,context);
-        Note.owner=owner;
-
-        storeExploredNotes(explored,context);
-        Note.explored = explored;
-        db.close();
+        //try {
+            Log.v("local", "store OwnerExplore Notes: " + data);
+            ArrayList<Note> newowner = Note.getOwnerExploredFromJSON(data).get(0);
+            ArrayList<Note>newexplored = Note.getOwnerExploredFromJSON(data).get(1);
+            if(!owner.equals(newowner)) {
+                storeOwnerNotes(owner, context);
+                Note.owner = owner;
+            }
+            if(!explored.equals(newexplored)) {
+                storeExploredNotes(explored, context);
+                Note.explored = explored;
+            }
+          //  db.close();
+        //}catch (Exception e){
+            //Log.v("local", "close issues "+e );
+            //db.close();
+        //}
+        num--;
+        Log.v("num", ""+num );
         Intent intent =new Intent();
         intent.setAction("explore");
         context.sendBroadcast(intent);

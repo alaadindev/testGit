@@ -3,6 +3,8 @@ require 'main.php';
 
 $res = array();
 $res['success']="false";
+$res['hasowned']="false";
+$res['hasexplored']="false";
 $res['error']="0";
 if ($_SERVER['REQUEST_METHOD']==='POST'){
   if(isset($_POST['username'])

@@ -79,15 +79,22 @@ public class Tracker extends Service implements LocationListener {
         Location locationB = new Location("B");
 
 
-        double latnote ,lngnote;
-        float result[] = new float[0];
-        ArrayList<Note> notes =LocalData.getNotes(this);
-        for(int i=0;i<notes.size();i++){
-            locationB.setLatitude(notes.get(i).getLat());
-            locationB.setLongitude(notes.get(i).getLng());
-            float distance = locationB.distanceTo(locationB);
-            if(distance<20){
-                explore(server,notes.get(i));
+        ArrayList<Note> notes =Note.getExplorable(context);
+        if(notes!=null) {
+            for (int i = 0; i < notes.size(); i++) {
+
+
+                locationB.setLatitude(notes.get(i).getLat());
+                locationB.setLongitude(notes.get(i).getLng());
+
+                double distance = locationB.distanceTo(locationA);
+
+                if (distance < 30) {
+                    explore(server, notes.get(i));
+                    Log.v("tracker", "explore" + notes.get(i).toString() + " : " + distance);
+                }
+
+
             }
         }
     }
@@ -103,6 +110,7 @@ public class Tracker extends Service implements LocationListener {
                 server.addExploreNote(note, user,pass);
             }
         });
+        thread.start();
 
     }
 
@@ -130,6 +138,7 @@ public class Tracker extends Service implements LocationListener {
         });
 
         thread.start();
+
 
         String currentLocation = "The location is changed to Lat: " + lat + " Lng: " + lng;
 

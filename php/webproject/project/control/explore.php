@@ -8,10 +8,18 @@ if($_SERVER['REQUEST_METHOD']==="POST"){
       $username = $_POST['username'];
       $noteID = (int)$_POST['noteID'];
       if(check::checkexplore($username,$noteID)){
-         $sql = "INSERT INTO owner (username, noteID) VALUES ('$username', '$noteID')";
-        if($conn->query($sql)){
-          $res['success']="true";
-        }
+
+        $sql="SELECT * FROM explored WHERE username='".$username."' AND noteID='".$noteID."';";
+        $result = $conn->query($sql);
+          if($result->num_rows==0){
+            $sql = "INSERT INTO explored (username, noteID) VALUES ('$username', '$noteID')";
+           if($conn->query($sql)){
+             $res['success']="true";
+           }
+          }else{
+
+          }
+        
         $conn->close();
       }else{
             //echo $conn->error . "h";

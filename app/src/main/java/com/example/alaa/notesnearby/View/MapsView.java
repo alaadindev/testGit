@@ -88,7 +88,7 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void run() {
                 updateLocation();
-                checkNearBy();
+                //checkNearBy();
                 handler1.postDelayed(this,9000);
             }
         };
@@ -138,28 +138,37 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
             }
         }
     }
-    public void updateLocation(){
-        SharedPreferences share = getSharedPreferences("log",MODE_PRIVATE);
-        double lat =Double.parseDouble(share.getString("lat",null));
-        double lng = Double.parseDouble(share.getString("lng",null));
-            if(user==null){
-                user =mMap.addMarker(new MarkerOptions().position(
-                        new LatLng(lat,lng)).title("me").
-                        icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-            }else{
-                user.setPosition(new LatLng(lat,lng));
-            }
+    public void updateLocation() {
+        SharedPreferences share = getSharedPreferences("log", MODE_PRIVATE);
+        double lat = Double.parseDouble(share.getString("lat", null));
+        double lng = Double.parseDouble(share.getString("lng", null));
+        if (user == null) {
+            user = mMap.addMarker(new MarkerOptions().position(
+                    new LatLng(lat, lng)).title("me").
+                    icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        } else {
+            user.setPosition(new LatLng(lat, lng));
+        }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lng),10));
-        Log.v("loc1",lat +" : "+ lng);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13));
+        Log.v("loc1", lat + " : " + lng);
 
     }
     public void updateNotes(){
         ArrayList<Note> newnotes =LocalData.getNotes(this);
         for(int i=0;i<newnotes.size();i++){
             if(!notes.contains(newnotes.get(i))) {
+                float color=BitmapDescriptorFactory.HUE_RED;
+                if(Note.owner!=null&&Note.explored!=null)
+                if(Note.owner.contains(newnotes.get(i))){
+                    color=BitmapDescriptorFactory.HUE_BLUE;
+                }else if(Note.explored.contains(newnotes.get(i))){
+                    color=BitmapDescriptorFactory.HUE_GREEN;
+                }
+
                 mMap.addMarker(new MarkerOptions().position(
-                        new LatLng(newnotes.get(i).getLat(), newnotes.get(i).getLng())).title(newnotes.get(i).getTitle()));
+                        new LatLng(newnotes.get(i).getLat(), newnotes.get(i).getLng())).title(newnotes.get(i).getTitle()).
+                        icon(BitmapDescriptorFactory.defaultMarker(color))).showInfoWindow();
                 Log.v("owner", newnotes.get(i).getOwner());
                 notes.add(newnotes.get(i));
             }
