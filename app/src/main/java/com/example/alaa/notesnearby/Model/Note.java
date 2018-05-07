@@ -77,6 +77,10 @@ public class Note {
             setLat(Double.parseDouble(json.getString("lat")));
             setLng(Double.parseDouble(json.getString("lng")));
             setOwner(json.getString("username"));
+            Log.v("Note"," noteid:"+json.getString("noteID")+" title: "+
+                    json.getString("title")+" contents: "+json.getString("contents")+
+                    " dates: "+json.getString("dates")+" lat: "+json.getString("lat")+
+                    " lng: "+json.getString("lng")+" username: "+json.getString("username"));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -106,59 +110,53 @@ public class Note {
         }
     }
     public static ArrayList<ArrayList<Note>> getOwnerExploredFromJSON(String data){
-        try {
 
-            JSONObject JSON = new JSONObject(data);
-            String isowner =JSON.getString("hasowned");
+        JSONObject JSON;
+        ArrayList<ArrayList<Note>> notes = new ArrayList<ArrayList<Note>>();
+        try {
+            JSON = new JSONObject(data);
+
+
+            String isowner = JSON.getString("hasowned");
             String isexplored = JSON.getString("hasexplored");
-            ArrayList<Note> owner =new ArrayList<Note>();
-            ArrayList<Note> explored = new ArrayList<Note>();
+            ArrayList<Note> newowner = new ArrayList<Note>();
+            ArrayList<Note> newexplored = new ArrayList<Note>();
 
             JSONArray jsonowner;
             JSONArray jsonexplored;
-            ArrayList<ArrayList<Note>> notes = new ArrayList<ArrayList<Note>>();
-            try {
-                jsonexplored = JSON.getJSONArray("explored");
-                for(int i=0;i<jsonexplored.length();i++){
-                    Note note = new Note(jsonexplored.getJSONObject(i));
-                    explored.add(note);
-                }
 
-            }catch (Exception e){
-                jsonexplored = null;
-            }
-            jsonowner =JSON.getJSONArray("owned");
-            try {
-                jsonowner =JSON.getJSONArray("owned");
-                for(int i=0;i<jsonowner.length();i++){
+
+            if (isowner.equals("true")) {
+                jsonowner = JSON.getJSONArray("owned");
+                for (int i = 0; i < jsonowner.length(); i++) {
                     Note note = new Note(jsonowner.getJSONObject(i));
-                    owner.add(note);
+                    newowner.add(note);
                 }
-            }catch (Exception e){
-                jsonowner =null;
             }
-            if(isowner=="true"){
-                owner = new ArrayList<Note>();
-            }
-            if(isexplored=="true"){
-                explored = new ArrayList<Note>();
+            if (isexplored.equals("true")) {
+
+                jsonexplored = JSON.getJSONArray("explored");
+                for (int i = 0; i < jsonexplored.length(); i++) {
+                    Note note = new Note(jsonexplored.getJSONObject(i));
+                    newexplored.add(note);
+                }
             }
 
-            notes.add(owner);
-            notes.add(explored);
+            notes.add(newowner);
+            notes.add(newexplored);
+            Log.v("note-OwnerExplored","owner: " + owner.get(0).getNoteId()+" explore: " + explored.get(0).getNoteId());
             return notes;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
+        }catch (Exception e){
+            Log.v("error","note: "+e);
+            return notes;
         }
+
     }
     public static ArrayList<Note> getExplorable(Context context) {
 
 
         List<Note> list1 = Note.owner;
-
-        List<Note> list2 = LocalData.getNotes(context);
-
+        List<Note> list2 = LocalData1.getNotes(context);
         if (list1 == null){
             list1 = new ArrayList<Note>();
             list1.add(new Note());

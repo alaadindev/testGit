@@ -2,6 +2,7 @@ package com.example.alaa.notesnearby.Model;
 
 
 
+
 import android.content.BroadcastReceiver;
         import android.content.Context;
         import android.content.Intent;
@@ -16,7 +17,7 @@ import android.content.BroadcastReceiver;
         import java.util.ArrayList;
         import java.util.List;
 
-public class LocalData {
+public class LocalData1 {
 
     static Context context;
     static SQLiteDatabase db;
@@ -28,10 +29,10 @@ public class LocalData {
     private static User user = null;
     private static List<Note> cursorlist = new ArrayList<Note>();
 
-    //public LocalData(Context context1){
-      //  context=context1;
-        //db = context.openOrCreateDatabase("local.db", Context.MODE_PRIVATE,null);
-    //}
+    public LocalData1(Context context1){
+        context=context1;
+        db = context.openOrCreateDatabase("local.db", Context.MODE_PRIVATE,null);
+    }
 
     public  static void openData(){
         if(!db.isOpen())
@@ -39,8 +40,8 @@ public class LocalData {
     }
     public static void jop(String sql){
         try {
-      //      openData();
-        //    db.execSQL(sql);
+            openData();
+            db.execSQL(sql);
             db.close();
             Log.v("local","jop");
         }catch (Exception e){
@@ -86,16 +87,29 @@ public class LocalData {
     }
 
     public static ArrayList<Note> getOwnerNotes(Context context1){
+        setup();
+        cursorlist = new ArrayList<Note>();
+        String sql ="SELECT noteID, title, contents, date, lat, lng, owner FROM owner";
+        jopCursor(sql);
+
+        owner=cursorlist;
         return (ArrayList<Note>)owner;
     }
     public static ArrayList<Note> getExplordNotes(Context context1){
-        return (ArrayList<Note>) explored;
+        setup();
+
+        cursorlist = new ArrayList<Note>();
+        String sql ="SELECT noteID, title, contents, date, lat, lng, owner FROM owner";
+        jopCursor(sql);
+
+        explored =cursorlist;
+        return (ArrayList<Note>)explored;
     }
-    public static void getOwnerExploredNotes(Context context){
+    public static void getOwnerExploredNotes(){
         explored=getExplordNotes(context);
-        owner=getNotes(context);
-        Note.owner=owner;
-        Note.explored=explored;
+        owner=getOwnerNotes(context);
+        //Note.explored=explored;
+        //Note.owner=owner;
     }
 
     public static void storeNotes(ArrayList<Note> note,Context context){
@@ -116,15 +130,44 @@ public class LocalData {
         }
 
     }
-    public static void storeOwnerNotes(List<Note> note,Context context){
+    public static void storeOwnerNotes(ArrayList<Note> note,Context context){
 
         owner=note;
+        String sql="drop table if exists owner";
+        jop(sql);
+        setup();
+        openData();
+        for(int i=0;i<owner.size();i++) {
+            String sql2 = "INSERT INTO owner(noteID, title, contents, date,lat, lng,owner)" +
+                    " VALUES('" + owner.get(i).getNoteId() + "','" +
+                    owner.get(i).getTitle() + "','" + owner.get(i).getContent() + "','" +
+                    owner.get(i).getDate() + "','" + owner.get(i).getLat() + "','" +
+                    owner.get(i).getLng() + "','" + owner.get(i).getOwner()+"')";
 
+            db.execSQL(sql2);
+        }
+        db.close();
+        Log.v("local","store owner notes");
 
     }
-    public static void storeExploredNotes(List<Note> note,Context context){
+    public static void storeExploredNotes(ArrayList<Note> note,Context context){
 
         explored=note;
+        String sql="drop table if exists explored";
+        jop(sql);
+        setup();
+        openData();
+        for(int i=0;i<explored.size();i++) {
+            String sql2 = "INSERT INTO explored(noteID, title, contents, date,lat, lng,owner)" +
+                    " VALUES('" + explored.get(i).getNoteId() + "','" +
+                    explored.get(i).getTitle() + "','" + explored.get(i).getContent() + "','" +
+                    explored.get(i).getDate() + "','" + explored.get(i).getLat() + "','" +
+                    explored.get(i).getLng() + "','" + explored.get(i).getOwner()+"')";
+            db.execSQL(sql2);
+        }
+
+        db.close();
+        Log.v("local","store explored notes");
 
     }
     public static void storeOwnerExploredNotes(String data, Context context){
@@ -133,11 +176,11 @@ public class LocalData {
         ArrayList<Note> newowner = Note.getOwnerExploredFromJSON(data).get(0);
         ArrayList<Note> newexplored = Note.getOwnerExploredFromJSON(data).get(1);
         if(!owner.equals(newowner)) {
-            storeOwnerNotes(owner, context);
+            storeOwnerNotes(newowner, context);
             Note.owner = owner;
         }
         if(!explored.equals(newexplored)) {
-            storeExploredNotes(explored, context);
+            storeExploredNotes(newexplored, context);
             Note.explored = explored;
         }
         Log.v("local-OwnerExplored","owner: " + newowner.toString()+" explore: " + newexplored.toString());

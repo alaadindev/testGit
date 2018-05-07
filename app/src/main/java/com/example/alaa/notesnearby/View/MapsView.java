@@ -13,7 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.alaa.notesnearby.Model.LocalData;
+import com.example.alaa.notesnearby.Model.LocalData1;
 import com.example.alaa.notesnearby.Model.Note;
 import com.example.alaa.notesnearby.Model.Tracker;
 import com.example.alaa.notesnearby.R;
@@ -21,7 +21,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -47,7 +46,7 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         Intent intent2 = new Intent(MapsView.this, Tracker.class);
-        startService(intent2);
+        //startService(intent2);
         //LocalData localData =new LocalData(this);
         //notes = LocalData.getNotes(this);
 
@@ -80,7 +79,7 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void run() {
                 updateNotes();
-                handler.postDelayed(this,25000);
+                handler.postDelayed(this,20000);
             }
         };
         final Handler handler1 = new Handler();
@@ -155,7 +154,8 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
 
     }
     public void updateNotes(){
-        ArrayList<Note> newnotes =LocalData.getNotes(this);
+        ArrayList<Note> newnotes = LocalData1.getNotes(this);
+
         for(int i=0;i<newnotes.size();i++){
             if(!notes.contains(newnotes.get(i))) {
                 float color=BitmapDescriptorFactory.HUE_RED;
@@ -185,7 +185,7 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
 
         double latnote ,lngnote;
         float result[] = new float[0];
-        ArrayList<Note> notes =LocalData.getNotes(this);
+        ArrayList<Note> notes = LocalData1.getNotes(this);
         for(int i=0;i<notes.size();i++){
             locationB.setLatitude(notes.get(i).getLat());
             locationB.setLongitude(notes.get(i).getLng());

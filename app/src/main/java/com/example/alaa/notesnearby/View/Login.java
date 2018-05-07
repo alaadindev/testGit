@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.alaa.notesnearby.Control.UserSession;
-import com.example.alaa.notesnearby.Model.LocalData;
 import com.example.alaa.notesnearby.R;
 
 public class Login extends AppCompatActivity {

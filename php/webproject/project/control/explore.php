@@ -3,6 +3,10 @@ require 'main.php';
 
 $res = array();
 $res['success']="false";
+$res['hasowned']="false";
+$res['hasexplored']="false";
+$res['user']="";
+$res['pass']="";
 if($_SERVER['REQUEST_METHOD']==="POST"){
   if(isset($_POST['username'])&&isset($_POST['noteID'])){
       $username = $_POST['username'];
@@ -19,7 +23,7 @@ if($_SERVER['REQUEST_METHOD']==="POST"){
           }else{
 
           }
-        
+
         $conn->close();
       }else{
             //echo $conn->error . "h";

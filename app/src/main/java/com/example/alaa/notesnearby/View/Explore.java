@@ -1,7 +1,5 @@
 package com.example.alaa.notesnearby.View;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -16,10 +14,10 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.alaa.notesnearby.Model.LocalData;
+import com.example.alaa.notesnearby.Model.LocalData1;
 import com.example.alaa.notesnearby.Model.Note;
 import com.example.alaa.notesnearby.Model.Server;
 import com.example.alaa.notesnearby.R;
-import com.example.alaa.notesnearby.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +43,7 @@ public class Explore extends AppCompatActivity {
     Button mynotes, explorednotes;
 
     Thread thread;
+    private SharedPreferences share;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,7 @@ public class Explore extends AppCompatActivity {
                 listitem);
         server= new Server(this);
 
-        SharedPreferences share =getSharedPreferences("log",MODE_PRIVATE);
+        share =getSharedPreferences("log",MODE_PRIVATE);
         final String user =share.getString("user",null);
 
         final String pass = share.getString("pass",null);
@@ -69,10 +68,11 @@ public class Explore extends AppCompatActivity {
             @Override
             public void run() {
                 server.updateOwnerExploredNote(user,pass);
-                Log.v("explore","update");
+                Log.v("explore","updateownerexplored");
             }
         });
         thread.start();
+
         Log.v("explore","update OwnerExplore Notes");
         listview.setAdapter(adapter);
         listview.setClickable(true);
@@ -93,6 +93,7 @@ public class Explore extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 isexplore=false;
+
                 update();
             }
         });
@@ -105,7 +106,7 @@ public class Explore extends AppCompatActivity {
         });
         if(!isupdate){
             //loop();
-            //isupdate=true;
+            isupdate=true;
             Log.v("explore","increate");
         }
     }
@@ -114,26 +115,27 @@ public class Explore extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                update();
+                //looping();
                 handler.postDelayed(this,5000);
                 Log.v("explore","loop");
             }
         };
-        final Handler handler1 = new Handler();
-
         handler.postDelayed(runnable, 5000);
 
     }
     public void update() {
 
         ArrayList<Note> list;
+        LocalData1.getOwnerExploredNotes();
         if (isexplore) {
 
             list = (ArrayList<Note>) Note.explored;
         } else {
+
             list = (ArrayList<Note>) Note.owner;
         }
         if (!list.equals(oldlist)) {
+
             adapter.clear();
             listid.clear();
             for (int i = 0; i < list.size(); i++) {
@@ -147,6 +149,11 @@ public class Explore extends AppCompatActivity {
             oldlist=list;
 
         }
+        //oldlist=list;
+        //Log.v("explore","oldlist"+list.toString());
+    }
+    public  void looping(){
+
     }
 
     public void onPause() {

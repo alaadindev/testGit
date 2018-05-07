@@ -4,15 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.alaa.notesnearby.Control.UserSession;
-import com.example.alaa.notesnearby.View.MapsView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -180,7 +176,7 @@ public class Server {
             String data = in.readLine();
             in.close();
 
-            LocalData.storeOwnerExploredNotes(data,context);
+            LocalData1.storeOwnerExploredNotes(data,context);
 
         }catch (Exception e){
 
@@ -192,14 +188,14 @@ public class Server {
     public void saveUserUpdate(String data){
         ArrayList<Note> notes =Note.getNoteFromJSON(data);
         Log.v("log",notes.get(0).getLng()+"");
-        LocalData.storeOwnerNotes(notes,context);
+        LocalData1.storeOwnerNotes(notes,context);
         Log.v("log",data);
     }
 
     public void saveUpdate(String data){
         ArrayList<Note> notes =Note.getNoteFromJSON(data);
         Log.v("log",notes.get(0).getLng()+"");
-        LocalData.storeNotes(notes,context);
+        LocalData1.storeNotes(notes,context);
         Log.v("log23",data);
     }
 
@@ -250,11 +246,11 @@ public class Server {
                 Log.v("server","ownerexplored");
                 if (success.equals("true")) {
 
-                    intent.setAction("ownerexplored");
-                    LocalData.storeOwnerExploredNotes(data,context);
-                    ArrayList<Note> notes1=LocalData.getExploredNotes(context);
-                    Note.explored = notes1;
-                    context.sendBroadcast(intent);
+                    //intent.setAction("ownerexplored");
+                    //LocalData.storeOwnerExploredNotes(data,context);
+                    //ArrayList<Note> notes1=LocalData.getExploredNotes(context);
+                    //Note.explored = notes1;
+                    //context.sendBroadcast(intent);
                 }
                 break;
 
