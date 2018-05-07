@@ -1,9 +1,18 @@
 package com.example.alaa.notesnearby.Model;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.alaa.notesnearby.MainActivity;
+import com.example.alaa.notesnearby.R;
+import com.example.alaa.notesnearby.View.NotesViewer;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,12 +26,13 @@ import java.util.ArrayList;
 
 public class Server {
     Context context;
+    public static String myhost="http://10.0.2.2:8888";
     public Server(Context context){
         this.context = context;
     }
     public void login(String user, String pass){
         try {
-            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/getuser.php");
+            URL url = new URL(myhost+"/testGit/php/webproject/project/control/getuser.php");
             HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
             urlcon.setDoOutput(true);
             urlcon.setRequestMethod("POST");
@@ -52,7 +62,7 @@ public class Server {
     public void signup(String user, String pass, String phone){
         Log.v("out","user:"+user+" pass:"+pass + " phone:"+phone);
         try {
-            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/createuser.php");
+            URL url = new URL(myhost+"/testGit/php/webproject/project/control/createuser.php");
             HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
                     urlcon.setDoOutput(true);
                     urlcon.setRequestMethod("POST");
@@ -82,7 +92,7 @@ public class Server {
     }
     public void createnote(String user, String pass, String title, String content, String lat, String lng){
         try {
-            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/createnote.php");
+            URL url = new URL(myhost+"/testGit/php/webproject/project/control/createnote.php");
             HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
             urlcon.setDoOutput(true);
             urlcon.setRequestMethod("POST");
@@ -112,7 +122,7 @@ public class Server {
     }
     public void updateNote(String user, String pass, String lat, String lng){
         try{
-            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/getnotes.php");
+            URL url = new URL(myhost+"/testGit/php/webproject/project/control/getnotes.php");
             HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
             urlcon.setDoInput(true);
             urlcon.setRequestMethod("POST");
@@ -136,7 +146,7 @@ public class Server {
     }
     public void addExploreNote(Note note,String user,String pass){
         try{
-            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/explore.php");
+            URL url = new URL(myhost+"/testGit/php/webproject/project/control/explore.php");
             HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
             urlcon.setDoInput(true);
             urlcon.setRequestMethod("POST");
@@ -152,6 +162,7 @@ public class Server {
             in.close();
             Log.v("server","addexplorenote: "+data);
             updateOwnerExploredNote(user,pass);
+            sendResult(data,"addexplored");
         }catch (Exception e){
 
         }
@@ -161,7 +172,7 @@ public class Server {
     public void updateOwnerExploredNote(String user, String pass){
         try{
             Log.v("server","updateOwnerExploreNotes");
-            URL url = new URL("http://10.0.2.2:8888/testGit/php/webproject/project/control/getusernotes.php");
+            URL url = new URL(myhost+"/testGit/php/webproject/project/control/getusernotes.php");
             HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
             urlcon.setDoInput(true);
             urlcon.setRequestMethod("POST");
@@ -191,6 +202,58 @@ public class Server {
         LocalData1.storeOwnerNotes(notes,context);
         Log.v("log",data);
     }
+    public void onexplored(JSONObject jsondata){
+        try {
+            //JSONArray jsonarray =jsondata.getJSONArray("data");
+            Note note = new Note(jsondata.getJSONObject("data"));
+
+
+            Notification.Builder builder = new Notification.Builder(context) .setContentTitle(note.getTitle())
+                    .setContentText("") .setAutoCancel(true) .setSmallIcon(R.drawable.common_google_signin_btn_icon_disabled);
+            Intent intent = new Intent(context, NotesViewer.class);
+            intent.putExtra("title", note.getTitle());
+            intent.putExtra("content", note.getContent());
+            intent.putExtra("date", note.getDate());
+            intent.putExtra("lat", note.getLat());
+            intent.putExtra("lng", note.getLng());
+
+            PendingIntent pending = PendingIntent.getActivity(
+                    context, 0, intent, 0);
+            builder.setContentIntent(pending);
+
+            Notification notification = builder.build();
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.notify(Integer.parseInt(note.getNoteId()), notification);
+            }
+            /*
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(context)
+                            .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                            .setContentTitle("Note Near you")
+                            .setContentText("");
+
+            Intent intent = new Intent(context, NotesViewer.class);
+            intent.putExtra("title", note.getTitle());
+            intent.putExtra("content", note.getContent());
+            intent.putExtra("date", note.getDate());
+            intent.putExtra("lat", note.getLat());
+            intent.putExtra("lng", note.getLng());
+            PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(contentIntent);
+
+            // Add as notification
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.notify(0, builder.build());
+            }*/
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void saveUpdate(String data){
         ArrayList<Note> notes =Note.getNoteFromJSON(data);
@@ -253,10 +316,13 @@ public class Server {
                     //context.sendBroadcast(intent);
                 }
                 break;
+            case "addexplored":
+                if(success.equals("true")){
+                    onexplored(jsdata);
+                    }
+
 
         }
 
-
     }
-
 }

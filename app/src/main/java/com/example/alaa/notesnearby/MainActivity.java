@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public void setup(){
         if(!isset){
             LocalData1 localData = new LocalData1(this);
-            //LocalData.clean(this);
+            LocalData1.clean(this);
             isset=true;
         }
     }

@@ -154,42 +154,45 @@ public class Note {
     }
     public static ArrayList<Note> getExplorable(Context context) {
 
-
-        List<Note> list1 = Note.owner;
-        List<Note> list2 = LocalData1.getNotes(context);
-        if (list1 == null){
-            list1 = new ArrayList<Note>();
-            list1.add(new Note());
+        LocalData1.getOwnerExploredNotes();
+        List<Note> mynote = owner;
+        List<Note> myexplored = explored;
+        List<Note> allnote = LocalData1.getNotes(context);
+        if (mynote == null){
+            mynote = new ArrayList<Note>();
+            mynote.add(new Note());
         }
-        if (list2 == null){
-            list2 = new ArrayList<Note>();
-            list2.add(new Note());
+        if (allnote == null){
+            allnote = new ArrayList<Note>();
+            allnote.add(new Note());
+        }
+        if (myexplored == null){
+            myexplored = new ArrayList<Note>();
+            myexplored.add(new Note());
         }
 // Prepare a union
-            List<Note> union = new ArrayList<Note>(list1);
-            union.addAll(list2);
+            List<Note> union = new ArrayList<Note>(mynote);
+            union.addAll(allnote);
 // Prepare an intersection
-            List<Note> intersection = new ArrayList<Note>(list1);
-            intersection.retainAll(list2);
+            List<Note> intersection = new ArrayList<Note>(mynote);
+            intersection.retainAll(allnote);
 // Subtract the intersection from the union
             union.removeAll(intersection);
 
-            list1 = Note.explored;
-            list2 = union;
-        if (list1 == null){
-            list1 = new ArrayList<Note>();
-            list1.add(new Note());
-        }
+
+            List<Note> notmynote = union;
+
 
 
 // Prepare a union
-            union = new ArrayList<Note>(list1);
-            union.addAll(list2);
+            union = new ArrayList<Note>(myexplored);
+            union.addAll(notmynote);
 // Prepare an intersection
-            intersection = new ArrayList<Note>(list1);
-            intersection.retainAll(list2);
+            intersection = new ArrayList<Note>(myexplored);
+            intersection.retainAll(notmynote);
 // Subtract the intersection from the union
             union.removeAll(intersection);
+        Log.v("Notetest:",""+union.get(0).getNoteId());
             return (ArrayList<Note>) union;
 
     }

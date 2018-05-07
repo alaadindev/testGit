@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.alaa.notesnearby.Control.UserSession;
+import com.example.alaa.notesnearby.Model.Server;
 import com.example.alaa.notesnearby.R;
 
 public class Login extends AppCompatActivity {
@@ -21,6 +22,8 @@ public class Login extends AppCompatActivity {
     TextView loginstatus,signupstatus;
     private IntentFilter intentfilter;
     private ReceiverServer receiverserver;
+    private Button gethost;
+    private EditText host;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +34,11 @@ public class Login extends AppCompatActivity {
         usersignup = findViewById(R.id.usersignup);
         passsignup = findViewById(R.id.passsignup);
         phonesignup = findViewById(R.id.phonesignup);
+        host = findViewById(R.id.host);
 
         login = findViewById(R.id.login);
         signup = findViewById(R.id.signup);
+        gethost = findViewById(R.id.gethost);
 
         loginstatus = findViewById(R.id.loginstatus);
         signupstatus = findViewById(R.id.signupstatus);
@@ -48,6 +53,12 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 signup();
+            }
+        });
+        gethost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gethost();
             }
         });
 
@@ -82,6 +93,9 @@ public class Login extends AppCompatActivity {
         intent.putExtra("pass",pass);
         intent.putExtra("phone",phone);
         startService(intent);
+    }
+    public void gethost(){
+        Server.myhost=host.getText().toString();
     }
     public void onPause() {
         super.onPause();

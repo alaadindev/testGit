@@ -79,7 +79,7 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void run() {
                 updateNotes();
-                handler.postDelayed(this,20000);
+                handler.postDelayed(this,3000);
             }
         };
         final Handler handler1 = new Handler();
@@ -88,12 +88,12 @@ public class MapsView extends FragmentActivity implements OnMapReadyCallback {
             public void run() {
                 updateLocation();
                 //checkNearBy();
-                handler1.postDelayed(this,9000);
+                handler1.postDelayed(this,2000);
             }
         };
 //Start
-        handler.postDelayed(runnable, 25000);
-        handler1.postDelayed(runnable1, 9000);
+        handler.postDelayed(runnable, 3000);
+        handler1.postDelayed(runnable1, 2000);
 
     }
 

@@ -91,7 +91,7 @@ public class Tracker extends Service implements LocationListener {
 
                 if (distance < 30) {
                     explore(server, notes.get(i));
-                    Log.v("tracker", "explore" + notes.get(i).toString() + " : " + distance);
+                    Log.v("tracker", "explore: owner: " + notes.get(i).getOwner() +" id: "+ notes.get(i).getNoteId()+ " : " + distance);
                 }
 
 
@@ -100,18 +100,10 @@ public class Tracker extends Service implements LocationListener {
     }
     public void explore(Server server1,Note note1){
         SharedPreferences share = getSharedPreferences("log",MODE_PRIVATE);
-        final Server server =server1;
-        final Note note = note1;
+
         final String user = share.getString("user",null);
         final String pass = share.getString("pass",null);
-        Thread thread =new Thread(new Runnable() {
-            @Override
-            public void run() {
-                server.addExploreNote(note, user,pass);
-            }
-        });
-        thread.start();
-
+                server1.addExploreNote(note1, user,pass);
     }
 
     @Override
@@ -133,6 +125,7 @@ public class Tracker extends Service implements LocationListener {
             public void run() {
 
                 server.updateNote(user, pass, lat,lng);
+                server.updateOwnerExploredNote(user,pass);
                 checkNearBy(server,Double.parseDouble(lat),Double.parseDouble(lng));
             }
         });

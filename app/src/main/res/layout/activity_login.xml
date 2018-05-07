@@ -49,5 +49,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/signupstatus"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/host"
+        android:text="@string/myhost"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gethost"/>
 
 </LinearLayout>

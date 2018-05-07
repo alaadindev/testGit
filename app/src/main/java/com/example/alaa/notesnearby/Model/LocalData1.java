@@ -65,7 +65,7 @@ public class LocalData1 {
             }
             cursor.close();
             db.close();
-            Log.v("local","jopcursor "+cursorlist.get(0).getOwner()+" : "+cursorlist.get(0).getNoteId());
+           // Log.v("local","jopcursor "+cursorlist.get(0).getOwner()+" : "+cursorlist.get(0).getNoteId());
         }catch (Exception e){
             Log.v("error","local: "+e);
             e.printStackTrace();
@@ -79,7 +79,7 @@ public class LocalData1 {
         String sql ="SELECT noteID, title, contents, date, lat, lng, owner FROM notes";
         jopCursor(sql);
 
-        Log.v("local","get notes" + cursorlist.get(0).getTitle());
+       // Log.v("local","get notes" + cursorlist.get(0).getTitle());
 
         notes=cursorlist;
 
